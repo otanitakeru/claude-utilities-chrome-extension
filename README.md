@@ -4,13 +4,17 @@ Claude (chrome) をより快適に使うための Chrome 拡張機能です。
 
 ## スクリーンショット
 
-| Before                       | After                      |
-| ---------------------------- | -------------------------- |
-| ![before](assets/before.jpg) | ![after](assets/after.jpg) |
+### Before
+
+<img src="assets/before.jpg" width="900">
+
+### After
+
+<img src="assets/after.jpg" width="900">
 
 ### ポップアップ
 
-![popup](assets/popup.jpg)
+<img src="assets/popup.jpg" width="500">
 
 ## 機能
 
