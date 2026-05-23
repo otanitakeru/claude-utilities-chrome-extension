@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 300px;
+        padding: 14px;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          sans-serif;
+        font-size: 13px;
+        background: #fff;
+        color: #1a1714;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 8px;
+      }
+      .logo {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .header-title {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #555;
+      }
+
+      .section {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .section-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: #999;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      /* トグル */
+      .toggle {
+        position: relative;
+        width: 30px;
+        height: 17px;
+        flex-shrink: 0;
+      }
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #ddd;
+        border-radius: 99px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .toggle input:checked + .toggle-track {
+        background: #d97757;
+      }
+      .toggle-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 13px;
+        height: 13px;
+        background: #fff;
+        border-radius: 50%;
+        pointer-events: none;
+        transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      .toggle input:checked ~ .toggle-thumb {
+        transform: translateX(13px);
+      }
+
+      /* 幅コントロール */
+      .width-control {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 10px;
+      }
+      .width-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      input[type="range"] {
+        flex: 1;
+        height: 3px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: #e0e0e0;
+        border-radius: 99px;
+        outline: none;
+        cursor: pointer;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #d97757;
+        cursor: pointer;
+        box-shadow:
+          0 0 0 2px #fff,
+          0 0 0 3px #d97757;
+        transition: box-shadow 0.15s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        box-shadow:
+          0 0 0 2px #fff,
+          0 0 0 4px #d97757;
+      }
+
+      input[type="number"] {
+        width: 54px;
+        padding: 3px 6px;
+        font-size: 12px;
+        font-family: inherit;
+        font-variant-numeric: tabular-nums;
+        background: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        color: #1a1714;
+        text-align: right;
+        outline: none;
+        transition: border-color 0.15s;
+        flex-shrink: 0;
+      }
+      input[type="number"]:focus {
+        border-color: #d97757;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+      }
+
+      .reset-btn {
+        font-size: 11px;
+        font-family: inherit;
+        color: #999;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: color 0.15s;
+        text-align: left;
+      }
+      .reset-btn:hover {
+        color: #d97757;
+      }
+
+      .footer {
+        font-size: 10px;
+        color: #bbb;
+        text-align: center;
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Copyright (c) 2026 Marcio Granzotto Rodrigues
+      Licensed under the MIT License
+    -->
+    <div class="header">
+      <div class="logo">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-3 0 21 18"
+          width="48"
+          height="48"
+          shape-rendering="crispEdges"
+        >
+          <defs>
+            <style>
+              .s-shadow {
+                transform-box: fill-box;
+                transform-origin: 50% 50%;
+                animation: s-shadow 1.6s infinite ease-in-out;
+              }
+              .s-body {
+                transform-origin: 7.5px 13px;
+                animation: s-body 1.6s infinite ease-in-out;
+              }
+              .s-ll,
+              .s-lo,
+              .s-rl,
+              .s-ro {
+                transform-box: fill-box;
+                transform-origin: 50% 0%;
+              }
+              .s-ll {
+                animation: s-ll 1.6s infinite ease-in-out;
+              }
+              .s-lo {
+                animation: s-lo 1.6s infinite ease-in-out;
+              }
+              .s-rl {
+                animation: s-rl 1.6s infinite ease-in-out;
+              }
+              .s-ro {
+                animation: s-ro 1.6s infinite ease-in-out;
+              }
+              .s-al {
+                transform-box: fill-box;
+                transform-origin: 100% 0%;
+                animation: s-al 1.6s infinite ease-in-out;
+              }
+              .s-ar {
+                transform-box: fill-box;
+                transform-origin: 0% 0%;
+                animation: s-ar 1.6s infinite ease-in-out;
+              }
+              .s-el {
+                transform-box: fill-box;
+                transform-origin: 100% 50%;
+                animation: s-eq 1.6s infinite ease-in-out;
+              }
+              .s-er {
+                transform-box: fill-box;
+                transform-origin: 0% 50%;
+                animation: s-eq 1.6s infinite ease-in-out;
+              }
+              @keyframes s-shadow {
+                0%,
+                100% {
+                  transform: translateX(0) scaleX(1);
+                  opacity: 0.5;
+                }
+                22%,
+                30% {
+                  transform: translateX(-0.5px) scaleX(0.85);
+                  opacity: 0.45;
+                }
+                50% {
+                  transform: translateX(0) scaleX(1);
+                  opacity: 0.5;
+                }
+                70%,
+                78% {
+                  transform: translateX(0.5px) scaleX(0.85);
+                  opacity: 0.45;
+                }
+              }
+              @keyframes s-body {
+                0%,
+                100% {
+                  transform: rotate(0deg) translateY(0);
+                }
+                22%,
+                30% {
+                  transform: rotate(-6deg) translateY(0.3px);
+                }
+                50% {
+                  transform: rotate(0deg) translateY(-0.2px);
+                }
+                70%,
+                78% {
+                  transform: rotate(6deg) translateY(0.3px);
+                }
+              }
+              @keyframes s-rl {
+                0%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                22%,
+                30% {
+                  transform: rotate(-12deg);
+                }
+                50%,
+                70%,
+                78% {
+                  transform: rotate(0deg);
+                }
+              }
+              @keyframes s-ro {
+                0%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                22%,
+                30% {
+                  transform: rotate(-22deg);
+                }
+                50%,
+                70%,
+                78% {
+                  transform: rotate(0deg);
+                }
+              }
+              @keyframes s-ll {
+                0%,
+                22%,
+                30%,
+                50%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                70%,
+                78% {
+                  transform: rotate(12deg);
+                }
+              }
+              @keyframes s-lo {
+                0%,
+                22%,
+                30%,
+                50%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                70%,
+                78% {
+                  transform: rotate(22deg);
+                }
+              }
+              @keyframes s-al {
+                0%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                22%,
+                30% {
+                  transform: rotate(-30deg);
+                }
+                50% {
+                  transform: rotate(0deg);
+                }
+                70%,
+                78% {
+                  transform: rotate(20deg);
+                }
+              }
+              @keyframes s-ar {
+                0%,
+                100% {
+                  transform: rotate(0deg);
+                }
+                22%,
+                30% {
+                  transform: rotate(-20deg);
+                }
+                50% {
+                  transform: rotate(0deg);
+                }
+                70%,
+                78% {
+                  transform: rotate(30deg);
+                }
+              }
+              @keyframes s-eq {
+                0%,
+                100% {
+                  transform: scaleX(1);
+                }
+                22%,
+                30% {
+                  transform: scaleX(0.85);
+                }
+                50% {
+                  transform: scaleX(1.02);
+                }
+                70%,
+                78% {
+                  transform: scaleX(0.85);
+                }
+              }
+            </style>
+          </defs>
+          <rect
+            class="s-shadow"
+            x="3"
+            y="15"
+            width="9"
+            height="1"
+            fill="#000"
+            opacity=".5"
+          />
+          <g fill="#DE886D">
+            <rect class="s-lo" x="3" y="13" width="1" height="2" />
+            <rect class="s-ll" x="5" y="13" width="1" height="2" />
+            <rect class="s-rl" x="9" y="13" width="1" height="2" />
+            <rect class="s-ro" x="11" y="13" width="1" height="2" />
+          </g>
+          <g class="s-body">
+            <rect x="2" y="6" width="11" height="7" fill="#DE886D" />
+            <g fill="#1D5C83">
+              <rect x="4.9" y="2.85" width="5.05" height=".75" />
+              <rect x="4.46" y="2.93" width=".75" height=".75" />
+              <rect x="9.66" y="2.93" width=".75" height=".75" />
+              <rect x="4.03" y="3.1" width=".75" height=".75" />
+              <rect x="10.11" y="3.09" width=".75" height=".75" />
+              <rect x="3.59" y="3.34" width=".75" height=".75" />
+              <rect x="10.57" y="3.33" width=".75" height=".75" />
+              <rect x="3.15" y="3.63" width=".75" height=".75" />
+              <rect x="11.02" y="3.61" width=".75" height=".75" />
+              <rect x="2.71" y="3.98" width=".75" height=".75" />
+              <rect x="11.48" y="3.96" width=".75" height=".75" />
+              <rect x="2.28" y="4.37" width=".75" height=".75" />
+              <rect x="11.94" y="4.34" width=".75" height=".75" />
+              <rect x="1.84" y="4.82" width=".75" height=".75" />
+              <rect x="12.39" y="4.78" width=".75" height=".75" />
+              <rect x="1.4" y="5.3" width=".75" height=".75" />
+              <rect x="12.85" y="5.25" width=".75" height=".75" />
+            </g>
+            <g class="s-el">
+              <rect x=".2" y="7" width=".6" height="2.4" fill="#1D5C83" />
+              <rect x=".8" y="6.5" width=".6" height="3.25" fill="#256891" />
+              <rect x="1.4" y="6" width=".6" height="4.05" fill="#2E7AA8" />
+            </g>
+            <g class="s-er">
+              <rect x="14.2" y="7" width=".6" height="2.4" fill="#1D5C83" />
+              <rect x="13.6" y="6.5" width=".6" height="3.25" fill="#256891" />
+              <rect x="13" y="6" width=".6" height="4.05" fill="#2E7AA8" />
+            </g>
+            <g class="s-al">
+              <rect x="-1" y="9" width="2" height="2" fill="#DE886D" />
+            </g>
+            <g class="s-ar">
+              <rect x="14" y="9" width="2" height="2" fill="#DE886D" />
+            </g>
+            <g
+              fill="none"
+              stroke="#000"
+              stroke-width=".7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="3.5,8.5 4.5,9.5 5.5,8.5" />
+              <polyline points="9.5,8.5 10.5,9.5 11.5,8.5" />
+            </g>
+          </g>
+        </svg>
+      </div>
+      <span class="header-title">Claude Utilities</span>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">チャット幅</span>
+        <label class="toggle">
+          <input id="wideEnabled" type="checkbox" />
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="width-control">
+        <div class="width-row">
+          <input id="widthRange" type="range" min="800" max="2000" step="20" />
+          <input
+            id="widthNumber"
+            type="number"
+            min="800"
+            max="2000"
+            step="20"
+          /><span style="font-size: 11px; color: #aaa; flex-shrink: 0">px</span>
+        </div>
+        <button class="reset-btn" id="resetWidth">↺ デフォルトに戻す</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">使用量バー</span>
+        <label class="toggle">
+          <input id="barEnabled" type="checkbox" />
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+
+    <p class="footer">反映されない場合はページを再読み込みしてください</p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
