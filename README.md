@@ -1,6 +1,16 @@
 # Claude Utilities Chrome Extension
 
-Claude.ai をより快適に使うための Chrome 拡張機能です。
+Claude (chrome) をより快適に使うための Chrome 拡張機能です。
+
+## スクリーンショット
+
+| Before                       | After                      |
+| ---------------------------- | -------------------------- |
+| ![before](assets/before.jpg) | ![after](assets/after.jpg) |
+
+### ポップアップ
+
+![popup](assets/popup.jpg)
 
 ## 機能
 
