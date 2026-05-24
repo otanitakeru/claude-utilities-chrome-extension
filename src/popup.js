@@ -58,7 +58,7 @@ function saveWide() {
   };
   chrome.storage.local.set(settings);
   if (wideDebounceTimer) clearTimeout(wideDebounceTimer);
-  wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 150);
+  wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 250);
 }
 
 let usageDebounceTimer = null;

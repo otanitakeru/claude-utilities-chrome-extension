@@ -114,17 +114,6 @@ safeChromeCall(() => {
   chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
 }, "wide.init");
 
-safeChromeCall(() => {
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "sync") return;
-    if (!changes.wideEnabled && !changes.width && !changes.padding) return;
-    safeChromeCall(
-      () => chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings),
-      "wide.onChanged",
-    );
-  });
-}, "wide.onChanged.listen");
-
 // ════════════════════════════════════════════════════════
 //  ② 使用量表示
 // ════════════════════════════════════════════════════════
@@ -135,9 +124,7 @@ let usageEnabled = true;
 let viewMode = "graph";
 
 function readUsageEnabled(stored) {
-  if (stored.usageEnabled !== undefined) return stored.usageEnabled;
-  if (stored.barEnabled !== undefined) return stored.barEnabled;
-  return true;
+  return stored.usageEnabled ?? true;
 }
 
 function getColor(utilization) {
@@ -324,7 +311,7 @@ function applyUsageRootBackground(root) {
 }
 
 function mountUsage(data) {
-  if (!usageEnabled) {
+  if (!usageEnabled || !data) {
     removeUsage();
     return true;
   }
@@ -382,6 +369,10 @@ function loadAndRender() {
   safeChromeCall(() => {
     chrome.storage.local.get(["usageData", "lastUpdated"], (result) => {
       if (contextInvalidated || !result) return;
+      if (!findInsertTarget()) {
+        removeUsage();
+        return;
+      }
       if (!mountUsage(result.usageData ?? null)) {
         setTimeout(loadAndRender, 1000);
         return;
@@ -393,16 +384,11 @@ function loadAndRender() {
 
 function sendMessageSafe(msg, callback) {
   safeChromeCall(() => {
-    chrome.runtime.sendMessage({ type: "PING" }, () => {
+    chrome.runtime.sendMessage(msg, (response) => {
       void chrome.runtime.lastError;
-      safeChromeCall(() => {
-        chrome.runtime.sendMessage(msg, (response) => {
-          void chrome.runtime.lastError;
-          callback?.(response);
-        });
-      }, "sendMessage");
+      callback?.(response);
     });
-  }, "sendPing");
+  }, "sendMessage");
   if (contextInvalidated) callback?.();
 }
 
@@ -470,9 +456,6 @@ safeChromeCall(() => {
     if (changes.viewMode) viewMode = changes.viewMode.newValue ?? "graph";
     if (changes.usageEnabled)
       usageEnabled = changes.usageEnabled.newValue ?? true;
-    if (changes.barEnabled && changes.usageEnabled === undefined) {
-      usageEnabled = changes.barEnabled.newValue ?? true;
-    }
     safeChromeCall(() => {
       chrome.storage.local.get(["usageData", "lastUpdated"], (result) => {
         if (contextInvalidated || !result) return;
@@ -511,5 +494,6 @@ safeChromeCall(() => {
     usageEnabled = readUsageEnabled(s);
     viewMode = s.viewMode ?? "graph";
     loadAndRender();
+    triggerRefresh("page-load", 250);
   });
 }, "usage.init");
