@@ -1,13 +1,14 @@
 const WIDE_DEFAULTS = { wideEnabled: true, width: 1200 };
-const BAR_DEFAULTS  = { barEnabled: true };
+const BAR_DEFAULTS = { barEnabled: true };
 const DEFAULT_WIDTH = 1200;
-const MIN_WIDTH = 800, MAX_WIDTH = 2000;
+const MIN_WIDTH = 800,
+  MAX_WIDTH = 2000;
 
 const wideEnabledInput = document.getElementById("wideEnabled");
-const widthRange       = document.getElementById("widthRange");
-const widthNumber      = document.getElementById("widthNumber");
-const resetWidthBtn    = document.getElementById("resetWidth");
-const barEnabledInput  = document.getElementById("barEnabled");
+const widthRange = document.getElementById("widthRange");
+const widthNumber = document.getElementById("widthNumber");
+const resetWidthBtn = document.getElementById("resetWidth");
+const barEnabledInput = document.getElementById("barEnabled");
 
 function clampWidth(v) {
   const n = parseInt(v, 10);
@@ -17,14 +18,16 @@ function clampWidth(v) {
 
 function setWidth(value) {
   const w = clampWidth(value);
-  widthRange.value  = w;
+  widthRange.value = w;
   widthNumber.value = w;
 }
 
 async function notifyActiveTab(settings) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return;
-  chrome.tabs.sendMessage(tab.id, { type: "CLAUDE_WIDE_CHAT_APPLY", ...settings }).catch(() => {});
+  chrome.tabs
+    .sendMessage(tab.id, { type: "CLAUDE_WIDE_CHAT_APPLY", ...settings })
+    .catch(() => {});
 }
 
 let wideDebounceTimer = null;
@@ -32,9 +35,9 @@ function saveWide() {
   const settings = {
     wideEnabled: wideEnabledInput.checked,
     width: clampWidth(widthRange.value),
-    padding: 8
+    padding: 8,
   };
-  chrome.storage.sync.set(settings);
+  chrome.storage.local.set(settings);
   if (wideDebounceTimer) clearTimeout(wideDebounceTimer);
   wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 150);
 }
@@ -44,15 +47,20 @@ function saveBar() {
   if (barDebounceTimer) clearTimeout(barDebounceTimer);
   barDebounceTimer = setTimeout(async () => {
     const enabled = barEnabledInput.checked;
-    chrome.storage.sync.set({ barEnabled: enabled });
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.storage.local.set({ barEnabled: enabled });
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     if (!tab?.id) return;
-    chrome.tabs.sendMessage(tab.id, { type: "CLAUDE_BAR_TOGGLE", enabled }).catch(() => {});
+    chrome.tabs
+      .sendMessage(tab.id, { type: "CLAUDE_BAR_TOGGLE", enabled })
+      .catch(() => {});
   }, 150);
 }
 
 // 初期値読み込み
-chrome.storage.sync.get({ ...WIDE_DEFAULTS, ...BAR_DEFAULTS }, (s) => {
+chrome.storage.local.get({ ...WIDE_DEFAULTS, ...BAR_DEFAULTS }, (s) => {
   wideEnabledInput.checked = s.wideEnabled;
   setWidth(s.width);
   barEnabledInput.checked = s.barEnabled;

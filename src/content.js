@@ -100,7 +100,7 @@ function applyWideSettings(s) {
 }
 
 safeChromeCall(() => {
-  chrome.storage.sync.get(WIDE_DEFAULTS, applyWideSettings);
+  chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
 }, "wide.init");
 
 safeChromeCall(() => {
@@ -108,7 +108,7 @@ safeChromeCall(() => {
     if (area !== "sync") return;
     if (!changes.wideEnabled && !changes.width && !changes.padding) return;
     safeChromeCall(
-      () => chrome.storage.sync.get(WIDE_DEFAULTS, applyWideSettings),
+      () => chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings),
       "wide.onChanged",
     );
   });
@@ -371,7 +371,7 @@ chrome.runtime.onMessage.addListener((msg) => {
 
 // ── 初期化 ───────────────────────────────────────────────
 safeChromeCall(() => {
-  chrome.storage.sync.get(BAR_DEFAULTS, (s) => {
+  chrome.storage.local.get(BAR_DEFAULTS, (s) => {
     barEnabled = s.barEnabled ?? true;
     loadAndRender();
   });
