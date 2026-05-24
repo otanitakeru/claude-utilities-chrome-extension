@@ -44,14 +44,23 @@ const STYLE_ID = "claude-wide-chat-style";
 const WIDE_DEFAULTS = { wideEnabled: true, width: 1000, padding: 8 };
 const WIDE_MIN_WIDTH = 650;
 const WIDE_MAX_WIDTH = 2000;
+const WIDE_WIDTH_STEP = 10;
 
 function clampNumber(value, fallback, min, max) {
   const n = Number(value);
   return Number.isFinite(n) ? Math.min(Math.max(n, min), max) : fallback;
 }
 
+function snapWideWidth(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return WIDE_DEFAULTS.width;
+  const clamped = Math.min(Math.max(n, WIDE_MIN_WIDTH), WIDE_MAX_WIDTH);
+  const steps = Math.round((clamped - WIDE_MIN_WIDTH) / WIDE_WIDTH_STEP);
+  return WIDE_MIN_WIDTH + steps * WIDE_WIDTH_STEP;
+}
+
 function buildWideCss(enabled, width, padding) {
-  const w = clampNumber(width, WIDE_DEFAULTS.width, WIDE_MIN_WIDTH, WIDE_MAX_WIDTH);
+  const w = snapWideWidth(width ?? WIDE_DEFAULTS.width);
   const p = clampNumber(padding, WIDE_DEFAULTS.padding, 0, 80);
   if (!enabled) return `:root { --cw-width: initial; --cw-padding: 0px; }`;
   return `
@@ -123,7 +132,7 @@ const USAGE_ROOT_ID = "claude-usage-root";
 const USAGE_DEFAULTS = { usageEnabled: true };
 
 let usageEnabled = true;
-let viewMode = "bar";
+let viewMode = "graph";
 
 function readUsageEnabled(stored) {
   if (stored.usageEnabled !== undefined) return stored.usageEnabled;
@@ -189,13 +198,13 @@ function buildBarHTML(data) {
       <span class="cub-label">5時間枠</span>
       <div class="cub-track"><div class="cub-fill" style="width:${Math.min(sessionPct ?? 0, 100)}%;background:${sc}"></div></div>
       <span class="cub-pct" style="color:${sc}">${formatPct(sessionPct)}</span>
-      ${sessionReset ? `<span class="cub-sub">${sessionReset} リセット</span>` : ""}
+      ${sessionReset ? `<span class="cub-sub">${sessionReset}</span>` : ""}
     </div>
     <div class="cub-row">
       <span class="cub-label">週間枠</span>
       <div class="cub-track"><div class="cub-fill" style="width:${Math.min(weeklyPct ?? 0, 100)}%;background:${wc}"></div></div>
       <span class="cub-pct" style="color:${wc}">${formatPct(weeklyPct)}</span>
-      ${weeklyReset ? `<span class="cub-sub">${weeklyReset} リセット</span>` : ""}
+      ${weeklyReset ? `<span class="cub-sub">${weeklyReset}</span>` : ""}
     </div>
     ${extraHTML}
     <div class="cub-actions">
@@ -458,8 +467,9 @@ document.addEventListener("visibilitychange", () => {
 safeChromeCall(() => {
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "local") return;
-    if (changes.viewMode) viewMode = changes.viewMode.newValue ?? "bar";
-    if (changes.usageEnabled) usageEnabled = changes.usageEnabled.newValue ?? true;
+    if (changes.viewMode) viewMode = changes.viewMode.newValue ?? "graph";
+    if (changes.usageEnabled)
+      usageEnabled = changes.usageEnabled.newValue ?? true;
     if (changes.barEnabled && changes.usageEnabled === undefined) {
       usageEnabled = changes.barEnabled.newValue ?? true;
     }
@@ -490,16 +500,16 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
   // 表示モード切替
   if (msg?.type === "CLAUDE_VIEW_MODE") {
-    viewMode = msg.viewMode ?? "bar";
+    viewMode = msg.viewMode ?? "graph";
     loadAndRender();
   }
 });
 
 // ── 初期化 ───────────────────────────────────────────────
 safeChromeCall(() => {
-  chrome.storage.local.get({ ...USAGE_DEFAULTS, viewMode: "bar" }, (s) => {
+  chrome.storage.local.get({ ...USAGE_DEFAULTS, viewMode: "graph" }, (s) => {
     usageEnabled = readUsageEnabled(s);
-    viewMode = s.viewMode ?? "bar";
+    viewMode = s.viewMode ?? "graph";
     loadAndRender();
   });
 }, "usage.init");

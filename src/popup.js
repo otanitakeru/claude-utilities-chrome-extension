@@ -1,9 +1,10 @@
 const WIDE_DEFAULTS = { wideEnabled: true, width: 1000 };
 const USAGE_DEFAULTS = { usageEnabled: true };
-const VIEW_DEFAULTS = { viewMode: "bar" };
+const VIEW_DEFAULTS = { viewMode: "graph" };
 const DEFAULT_WIDTH = 1000;
 const MIN_WIDTH = 650,
   MAX_WIDTH = 2000;
+const WIDTH_STEP = 10;
 
 const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
@@ -20,14 +21,16 @@ function readUsageEnabled(stored) {
   return true;
 }
 
-function clampWidth(v) {
+function snapWidth(v) {
   const n = parseInt(v, 10);
   if (!Number.isFinite(n)) return DEFAULT_WIDTH;
-  return Math.min(Math.max(n, MIN_WIDTH), MAX_WIDTH);
+  const clamped = Math.min(Math.max(n, MIN_WIDTH), MAX_WIDTH);
+  const steps = Math.round((clamped - MIN_WIDTH) / WIDTH_STEP);
+  return MIN_WIDTH + steps * WIDTH_STEP;
 }
 
 function setWidth(value) {
-  const w = clampWidth(value);
+  const w = snapWidth(value);
   widthRange.value = w;
   widthNumber.value = w;
 }
@@ -50,7 +53,7 @@ let wideDebounceTimer = null;
 function saveWide() {
   const settings = {
     wideEnabled: wideEnabledInput.checked,
-    width: clampWidth(widthRange.value),
+    width: snapWidth(widthRange.value),
     padding: 8,
   };
   chrome.storage.local.set(settings);
@@ -96,7 +99,7 @@ chrome.storage.local.get(
     const usageOn = readUsageEnabled(s);
     usageEnabledInput.checked = usageOn;
     viewModeControl.style.display = usageOn ? "flex" : "none";
-    updateViewBtns(s.viewMode ?? "bar");
+    updateViewBtns(s.viewMode ?? "graph");
   },
 );
 
@@ -108,7 +111,7 @@ widthRange.addEventListener("input", () => {
 
 // テキスト入力 → スライダーに反映（Enterまたはフォーカスアウト時）
 function applyNumberInput() {
-  const w = clampWidth(widthNumber.value);
+  const w = snapWidth(widthNumber.value);
   setWidth(w);
   saveWide();
 }
