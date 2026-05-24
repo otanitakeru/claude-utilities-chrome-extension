@@ -1,20 +1,10 @@
-# Claude Utilities Chrome Extension
+# Claude Utilities
 
-Claude (chrome) をより快適に使うための Chrome 拡張機能です。
+Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です。
 
-## スクリーンショット
-
-### Before
-
-<img src="assets/before.jpg" width="900">
-
-### After
-
-<img src="assets/after.jpg" width="900">
-
-### ポップアップ
-
-<img src="assets/popup.jpg" width="500">
+<div align="center">
+  <img src="assets/top.jpg" width="100%">
+</div>
 
 ## 機能
 
@@ -33,7 +23,17 @@ Claude (chrome) をより快適に使うための Chrome 拡張機能です。
 - 800〜2000px の範囲で調整可能
 - 拡張機能アイコンのポップアップからスライダーまたは数値入力で設定
 
-## インストール
+## スクリーンショット
+
+### Before
+
+<img src="assets/before.jpg" width="900">
+
+### After
+
+<img src="assets/after.jpg" width="900">
+
+## インストール方法
 
 1. [Releases](../../releases) から最新の `claude-utilities-vX.X.X.zip` をダウンロード
 2. 解凍する
@@ -41,24 +41,6 @@ Claude (chrome) をより快適に使うための Chrome 拡張機能です。
 4. 右上の **「デベロッパーモード」** をオンにする
 5. 左上の **「パッケージ化されていない拡張機能を読み込む」** をクリック
 6. 解凍したフォルダを選択する
-
-## 開発
-
-```bash
-git clone https://github.com/YOUR_USERNAME/claude-utilities-chrome-extension.git
-cd claude-utilities-chrome-extension
-```
-
-`src/` フォルダを Chrome の拡張機能ページから読み込むだけで動作します。
-
-## リリース
-
-タグを push すると GitHub Actions が自動的に ZIP を作成して Release に添付します。
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
 
 ## ライセンス
 
