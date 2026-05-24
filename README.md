@@ -20,7 +20,7 @@ Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です�
 
 チャット本文エリアの最大幅を自由に変更できます。
 
-- 800〜2000px の範囲で調整可能
+- 650〜2000px の範囲で調整可能（デフォルト 1000px）
 - 拡張機能アイコンのポップアップからスライダーまたは数値入力で設定
 
 ## スクリーンショット
@@ -41,6 +41,20 @@ Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です�
 4. 右上の **「デベロッパーモード」** をオンにする
 5. 左上の **「パッケージ化されていない拡張機能を読み込む」** をクリック
 6. 解凍したフォルダを選択する
+
+<details>
+<summary>オプション: git clone から入れる（開発者向け）</summary>
+
+最新の `main` を試したい場合や、ソースを改変して使う場合のみ、こちらでも同じように入れられます。
+
+```bash
+git clone https://github.com/otanitakeru/claude-utilities-chrome-extension.git
+cd claude-utilities-chrome-extension
+```
+
+手順 3〜5 は上と同じです。手順 6 では、clone したリポジトリ内の **`src` フォルダ** を選んでください（Release ZIP を解凍したフォルダと同じ中身です）。
+
+</details>
 
 ## ライセンス
 

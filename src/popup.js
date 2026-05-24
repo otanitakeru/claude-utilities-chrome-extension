@@ -1,14 +1,24 @@
-const WIDE_DEFAULTS = { wideEnabled: true, width: 1200 };
-const BAR_DEFAULTS = { barEnabled: true };
-const DEFAULT_WIDTH = 1200;
-const MIN_WIDTH = 800,
+const WIDE_DEFAULTS = { wideEnabled: true, width: 1000 };
+const USAGE_DEFAULTS = { usageEnabled: true };
+const VIEW_DEFAULTS = { viewMode: "bar" };
+const DEFAULT_WIDTH = 1000;
+const MIN_WIDTH = 650,
   MAX_WIDTH = 2000;
 
 const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
 const widthNumber = document.getElementById("widthNumber");
 const resetWidthBtn = document.getElementById("resetWidth");
-const barEnabledInput = document.getElementById("barEnabled");
+const usageEnabledInput = document.getElementById("usageEnabled");
+const viewModeControl = document.getElementById("viewModeControl");
+const viewBarBtn = document.getElementById("viewBar");
+const viewGraphBtn = document.getElementById("viewGraph");
+
+function readUsageEnabled(stored) {
+  if (stored.usageEnabled !== undefined) return stored.usageEnabled;
+  if (stored.barEnabled !== undefined) return stored.barEnabled;
+  return true;
+}
 
 function clampWidth(v) {
   const n = parseInt(v, 10);
@@ -30,6 +40,12 @@ async function notifyActiveTab(settings) {
     .catch(() => {});
 }
 
+async function sendToActiveTab(msg) {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return;
+  chrome.tabs.sendMessage(tab.id, msg).catch(() => {});
+}
+
 let wideDebounceTimer = null;
 function saveWide() {
   const settings = {
@@ -42,29 +58,47 @@ function saveWide() {
   wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 150);
 }
 
-let barDebounceTimer = null;
-function saveBar() {
-  if (barDebounceTimer) clearTimeout(barDebounceTimer);
-  barDebounceTimer = setTimeout(async () => {
-    const enabled = barEnabledInput.checked;
-    chrome.storage.local.set({ barEnabled: enabled });
+let usageDebounceTimer = null;
+function saveUsage() {
+  if (usageDebounceTimer) clearTimeout(usageDebounceTimer);
+  usageDebounceTimer = setTimeout(async () => {
+    const enabled = usageEnabledInput.checked;
+    chrome.storage.local.set({ usageEnabled: enabled });
+    viewModeControl.style.display = enabled ? "flex" : "none";
     const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true,
     });
     if (!tab?.id) return;
     chrome.tabs
-      .sendMessage(tab.id, { type: "CLAUDE_BAR_TOGGLE", enabled })
+      .sendMessage(tab.id, { type: "CLAUDE_USAGE_TOGGLE", enabled })
       .catch(() => {});
   }, 150);
 }
 
+function updateViewBtns(mode) {
+  viewBarBtn.classList.toggle("active", mode === "bar");
+  viewGraphBtn.classList.toggle("active", mode === "graph");
+}
+
+function saveViewMode(mode) {
+  chrome.storage.local.set({ viewMode: mode });
+  updateViewBtns(mode);
+  sendToActiveTab({ type: "CLAUDE_VIEW_MODE", viewMode: mode });
+}
+
 // 初期値読み込み
-chrome.storage.local.get({ ...WIDE_DEFAULTS, ...BAR_DEFAULTS }, (s) => {
-  wideEnabledInput.checked = s.wideEnabled;
-  setWidth(s.width);
-  barEnabledInput.checked = s.barEnabled;
-});
+chrome.storage.local.get(
+  { ...WIDE_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS },
+  (s) => {
+    wideEnabledInput.checked = s.wideEnabled;
+    setWidth(s.width);
+    const usageOn = readUsageEnabled(s);
+    usageEnabledInput.checked = usageOn;
+    viewModeControl.style.display = usageOn ? "flex" : "none";
+    updateViewBtns(s.viewMode ?? "bar");
+  },
+);
 
 // スライダー操作 → number に反映
 widthRange.addEventListener("input", () => {
@@ -90,4 +124,6 @@ resetWidthBtn.addEventListener("click", () => {
 });
 
 wideEnabledInput.addEventListener("change", saveWide);
-barEnabledInput.addEventListener("change", saveBar);
+usageEnabledInput.addEventListener("change", saveUsage);
+viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
+viewGraphBtn.addEventListener("click", () => saveViewMode("graph"));

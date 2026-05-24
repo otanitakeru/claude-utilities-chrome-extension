@@ -184,6 +184,36 @@
         color: #d97757;
       }
 
+      .view-mode-btns {
+        display: flex;
+        gap: 4px;
+        margin-top: 8px;
+      }
+      .view-mode-btn {
+        flex: 1;
+        padding: 5px 0;
+        font-size: 11px;
+        font-family: inherit;
+        background: #f0f0f0;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        cursor: pointer;
+        color: #666;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .view-mode-btn.active {
+        background: #d97757;
+        border-color: #d97757;
+        color: #fff;
+        font-weight: 600;
+      }
+      .view-mode-btn:not(.active):hover {
+        background: #e8e8e8;
+      }
+
       .footer {
         font-size: 10px;
         color: #bbb;
@@ -483,11 +513,11 @@
       </div>
       <div class="width-control">
         <div class="width-row">
-          <input id="widthRange" type="range" min="800" max="2000" step="20" />
+          <input id="widthRange" type="range" min="650" max="2000" step="20" />
           <input
             id="widthNumber"
             type="number"
-            min="800"
+            min="650"
             max="2000"
             step="20"
           /><span style="font-size: 11px; color: #aaa; flex-shrink: 0">px</span>
@@ -500,10 +530,14 @@
       <div class="section-header">
         <span class="section-title">使用量</span>
         <label class="toggle">
-          <input id="barEnabled" type="checkbox" />
+          <input id="usageEnabled" type="checkbox" />
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
+      </div>
+      <div class="view-mode-btns" id="viewModeControl" style="display:none">
+        <button class="view-mode-btn active" id="viewBar">バー</button>
+        <button class="view-mode-btn" id="viewGraph">グラフ</button>
       </div>
     </div>
 
