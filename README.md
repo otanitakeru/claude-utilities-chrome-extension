@@ -6,7 +6,7 @@ Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です�
   <img src="assets/top.jpg" width="100%">
 </div>
 
-## 機
+## 機能
 
 ### チャット幅調整
 
@@ -23,17 +23,7 @@ Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です�
 - 残り10%未満で赤色に変化
 - Claudeの返答完了後に自動更新
 
-## スクリーンショット
-
-### Before
-
-<img src="assets/before.jpg" width="900">
-
-### After
-
-<img src="assets/after.jpg" width="900">
-
-## インストール方法
+## 利用方法
 
 1. [Releases](../../releases) から最新の `claude-utilities-vX.X.X.zip` をダウンロード
 2. 解凍する
@@ -55,6 +45,16 @@ cd claude-utilities-chrome-extension
 手順 3〜5 は上と同じです。手順 6 では、clone したリポジトリ内の **`src` フォルダ** を選んでください（Release ZIP を解凍したフォルダと同じ中身です）。
 
 </details>
+
+## スクリーンショット
+
+### Before
+
+<img src="assets/before.jpg" width="900">
+
+### After
+
+<img src="assets/after.jpg" width="900">
 
 ## ライセンス
 
