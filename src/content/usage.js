@@ -14,17 +14,16 @@ function formatPct(pct) {
 function formatResetsAtRelative(isoStr) {
   if (!isoStr) return null;
   const diffMs = new Date(isoStr) - Date.now();
-  if (diffMs <= 0) return "まもなく";
+  if (diffMs <= 0) return t("soon");
   const h = Math.floor(diffMs / 3600000);
   const m = Math.floor((diffMs % 3600000) / 60000);
-  if (m === 0) return "まもなく";
-  return h > 0 ? `${h}時間${m}分後` : `${m}分後`;
+  if (m === 0) return t("soon");
+  return t("timeRemaining", h, m);
 }
 
 function formatResetsAtWeekday(isoStr) {
   if (!isoStr) return null;
-  const weekdays = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-  return `${weekdays[new Date(isoStr).getDay()]}`;
+  return t("weekday", new Date(isoStr).getDay());
 }
 
 function formatCredit(raw) {
@@ -44,7 +43,7 @@ function buildBarHTML(data) {
     ? (() => {
         const ec = getColor(extra.utilization);
         return `<div class="cub-row">
-      <span class="cub-label">追加枠</span>
+      <span class="cub-label">${t("usageExtra")}</span>
       <div class="cub-track"><div class="cub-fill" style="width:${Math.min(extra.utilization, 100)}%;background:${ec}"></div></div>
       <span class="cub-pct" style="color:${ec}">${Math.round(extra.utilization)}%</span>
       <span class="cub-sub">${formatCredit(extra.used_credits)} / ${formatCredit(extra.monthly_limit)}</span>
@@ -54,13 +53,13 @@ function buildBarHTML(data) {
 
   return `<div class="cub-inner">
     <div class="cub-row">
-      <span class="cub-label">5時間枠</span>
+      <span class="cub-label">${t("usageSession")}</span>
       <div class="cub-track"><div class="cub-fill" style="width:${Math.min(sessionPct ?? 0, 100)}%;background:${sc}"></div></div>
       <span class="cub-pct" style="color:${sc}">${formatPct(sessionPct)}</span>
       ${sessionReset ? `<span class="cub-sub">${sessionReset}</span>` : ""}
     </div>
     <div class="cub-row">
-      <span class="cub-label">週間枠</span>
+      <span class="cub-label">${t("usageWeekly")}</span>
       <div class="cub-track"><div class="cub-fill" style="width:${Math.min(weeklyPct ?? 0, 100)}%;background:${wc}"></div></div>
       <span class="cub-pct" style="color:${wc}">${formatPct(weeklyPct)}</span>
       ${weeklyReset ? `<span class="cub-sub">${weeklyReset}</span>` : ""}
@@ -68,8 +67,8 @@ function buildBarHTML(data) {
     ${extraHTML}
     <div class="cub-actions">
       <span class="cub-updated" id="cub-updated-time"></span>
-      <span class="cub-refreshing" id="cub-refreshing" style="display:none">更新中…</span>
-      <button class="cub-refresh-btn" id="cub-refresh-btn">↻ 更新</button>
+      <span class="cub-refreshing" id="cub-refreshing" style="display:none">${t("refreshing")}</span>
+      <button class="cub-refresh-btn" id="cub-refresh-btn">${t("refreshBtn")}</button>
     </div>
   </div>`;
 }
@@ -108,8 +107,16 @@ function buildGraphHTML(data) {
   const wc = getColor(weeklyPct);
 
   const items = [
-    { pct: sessionPct, reset: formatResetsAtRelative(data?.sessionResetsAt), color: sc },
-    { pct: weeklyPct, reset: formatResetsAtWeekday(data?.weeklyResetsAt), color: wc },
+    {
+      pct: sessionPct,
+      reset: formatResetsAtRelative(data?.sessionResetsAt),
+      color: sc,
+    },
+    {
+      pct: weeklyPct,
+      reset: formatResetsAtWeekday(data?.weeklyResetsAt),
+      color: wc,
+    },
   ];
 
   if (extra) {
@@ -137,8 +144,8 @@ function buildGraphHTML(data) {
       <div class="cug-side cug-side--right">
         <div class="cub-actions cub-actions--graph">
           <span class="cub-updated" id="cub-updated-time"></span>
-          <span class="cub-refreshing" id="cub-refreshing" style="display:none">更新中…</span>
-          <button class="cub-refresh-btn" id="cub-refresh-btn">↻ 更新</button>
+          <span class="cub-refreshing" id="cub-refreshing" style="display:none">${t("refreshing")}</span>
+          <button class="cub-refresh-btn" id="cub-refresh-btn">${t("refreshBtn")}</button>
         </div>
       </div>
     </div>
@@ -213,11 +220,18 @@ function updateTimestamp(lastUpdated) {
   const el = document.getElementById("cub-updated-time");
   if (!el || !lastUpdated) return;
   const d = new Date(lastUpdated);
-  el.textContent = `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")} 更新`;
+  const h = d.getHours().toString().padStart(2, "0");
+  const m = d.getMinutes().toString().padStart(2, "0");
+  el.textContent = t("updatedAt", h, m);
 }
 
 function findInsertTarget() {
-  for (const sel of ["fieldset", '[data-testid="composer"]', "form", ".composer"]) {
+  for (const sel of [
+    "fieldset",
+    '[data-testid="composer"]',
+    "form",
+    ".composer",
+  ]) {
     const el = document.querySelector(sel);
     if (el) return el;
   }

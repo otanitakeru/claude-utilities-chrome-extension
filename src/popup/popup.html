@@ -176,9 +176,11 @@
         background: none;
         border: none;
         padding: 0;
+        height: 16px;
         cursor: pointer;
         transition: color 0.15s;
         text-align: left;
+        white-space: nowrap;
       }
       .reset-btn:hover {
         color: #d97757;
@@ -192,6 +194,7 @@
       .view-mode-btn {
         flex: 1;
         padding: 5px 0;
+        height: 26px;
         font-size: 11px;
         font-family: inherit;
         background: #f0f0f0;
@@ -199,6 +202,8 @@
         border-radius: 5px;
         cursor: pointer;
         color: #666;
+        white-space: nowrap;
+        overflow: hidden;
         transition:
           background 0.15s,
           color 0.15s,
@@ -236,6 +241,21 @@
       .main-panel[hidden],
       .footer[hidden] {
         display: none;
+      }
+
+      .lang-select {
+        font-size: 12px;
+        font-family: inherit;
+        padding: 3px 6px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        background: #f8f8f8;
+        color: #1a1714;
+        cursor: pointer;
+        outline: none;
+      }
+      .lang-select:focus {
+        border-color: #d97757;
       }
     </style>
   </head>
@@ -525,7 +545,7 @@
     <div id="mainPanel" class="main-panel">
     <div class="section">
       <div class="section-header">
-        <span class="section-title">チャット幅</span>
+        <span class="section-title" data-i18n="sectionChatWidth">チャット幅</span>
         <label class="toggle">
           <input id="wideEnabled" type="checkbox" />
           <div class="toggle-track"></div>
@@ -543,13 +563,13 @@
             step="10"
           /><span style="font-size: 11px; color: #aaa; flex-shrink: 0">px</span>
         </div>
-        <button class="reset-btn" id="resetWidth">↺ デフォルトに戻す</button>
+        <button class="reset-btn" id="resetWidth" data-i18n="resetWidth">↺ デフォルトに戻す</button>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <span class="section-title">使用量</span>
+        <span class="section-title" data-i18n="sectionUsage">使用量</span>
         <label class="toggle">
           <input id="usageEnabled" type="checkbox" />
           <div class="toggle-track"></div>
@@ -557,16 +577,27 @@
         </label>
       </div>
       <div class="view-mode-btns" id="viewModeControl" style="display: none">
-        <button class="view-mode-btn active" id="viewGraph">グラフ</button>
-        <button class="view-mode-btn" id="viewBar">バー</button>
+        <button class="view-mode-btn active" id="viewGraph" data-i18n="viewGraph">グラフ</button>
+        <button class="view-mode-btn" id="viewBar" data-i18n="viewBar">バー</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title" data-i18n="sectionLanguage">言語</span>
+        <select id="langSelect" class="lang-select">
+          <option value="ja">日本語</option>
+          <option value="en">English</option>
+        </select>
       </div>
     </div>
     </div>
 
-    <p class="footer" id="popupFooter">反映されない場合はページを再読み込みしてください</p>
+    <p class="footer" id="popupFooter" data-i18n="footerReload">反映されない場合はページを再読み込みしてください</p>
 
     <script src="../shared/pageContext.js"></script>
     <script src="../shared/constants.js"></script>
+    <script src="../shared/i18n.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

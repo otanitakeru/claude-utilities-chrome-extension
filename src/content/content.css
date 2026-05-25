@@ -16,7 +16,7 @@
 /* グリッドで4列固定：ラベル | バー | % | サブテキスト */
 .cub-row {
   display: grid;
-  grid-template-columns: 50px 1fr 40px 90px;
+  grid-template-columns: 55px 1fr 40px 90px;
   align-items: center;
   gap: 8px;
   min-height: 18px;

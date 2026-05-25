@@ -1,52 +1,58 @@
 # Claude Utilities
 
-Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です。
+A Chrome extension to enhance your experience on Claude (claude.ai).
+
+[日本語](README.ja.md)
 
 <div align="center">
   <img src="assets/top.jpg" width="100%">
 </div>
 
-## 機能
+## Features
 
-### チャット幅調整
+### Chat Width
 
-チャット本文エリアの最大幅を自由に変更できます。
+Freely adjust the maximum width of the chat area.
 
-- 650〜2000px の範囲で調整可能（デフォルト 1000px）
-- 拡張機能アイコンのポップアップからスライダーまたは数値入力で設定
+- Configurable between 650–2000px (default: 1000px)
+- Set via slider or numeric input in the extension popup
 
-### 使用量
+### Usage
 
-チャット入力欄の上に使用量をリアルタイムで表示します。
+Displays real-time usage above the chat input.
 
-- 5時間セッション枠・週間枠・追加枠の使用率を プログレスバー / ドーナツチャート の2種類で表示可能
-- 残り10%未満で赤色に変化
-- Claudeの返答完了後に自動更新
+- Shows 5-hour session, weekly, and extra quota as a progress bar or donut chart
+- Turns red when less than 10% remains
+- Auto-refreshes after Claude finishes responding
 
-## 利用方法
+### Language
 
-1. [Releases](../../releases) から最新の `claude-utilities-vX.X.X.zip` をダウンロード
-2. 解凍する
-3. Chrome で `chrome://extensions/` を開く
-4. 右上の **「デベロッパーモード」** をオンにする
-5. 左上の **「パッケージ化されていない拡張機能を読み込む」** をクリック
-6. 解凍したフォルダを選択する
+Switch between Japanese and English from the extension popup.
+
+## Installation
+
+1. Download the latest `claude-utilities-vX.X.X.zip` from [Releases](../../releases)
+2. Unzip the file
+3. Open `chrome://extensions/` in Chrome
+4. Enable **Developer mode** (top right)
+5. Click **Load unpacked** (top left)
+6. Select the unzipped folder
 
 <details>
-<summary>オプション: git clone から入れる（開発者向け）</summary>
+<summary>Option: Install via git clone (for developers)</summary>
 
-最新の `main` を試したい場合や、ソースを改変して使う場合のみ、こちらでも同じように入れられます。
+Use this if you want to try the latest `main` branch or modify the source.
 
 ```bash
 git clone https://github.com/otanitakeru/claude-utilities-chrome-extension.git
 cd claude-utilities-chrome-extension
 ```
 
-手順 3〜5 は上と同じです。手順 6 では、clone したリポジトリ内の **`src` フォルダ** を選んでください（Release ZIP を解凍したフォルダと同じ中身です）。
+Steps 3–5 are the same as above. In step 6, select the **`src` folder** inside the cloned repository.
 
 </details>
 
-## スクリーンショット
+## Screenshots
 
 ### Before
 
@@ -56,11 +62,11 @@ cd claude-utilities-chrome-extension
 
 <img src="assets/after.jpg" width="900">
 
-## ライセンス
+## License
 
 MIT
 
-## クレジット
+## Credits
 
-アイコンのピクセルアートキャラクター（Clawd）は [marciogranzotto/clawd-tank](https://github.com/marciogranzotto/clawd-tank) の SVG アセットを一部改変して使用しています。
-原作者: Marcio Granzotto Rodrigues（MIT License）
+The pixel art character (Clawd) in the icon is adapted from SVG assets in [marciogranzotto/clawd-tank](https://github.com/marciogranzotto/clawd-tank).
+Original author: Marcio Granzotto Rodrigues (MIT License)

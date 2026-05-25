@@ -39,6 +39,13 @@ function safeChromeCall(fn, label = "unknown") {
   }
 }
 
+// ── 言語 初期化 ──────────────────────────────────────────
+safeChromeCall(() => {
+  chrome.storage.local.get(LANG_DEFAULTS, (s) => {
+    currentLang = s.lang ?? "ja";
+  });
+}, "lang.init");
+
 // ── チャット幅 初期化 ────────────────────────────────────
 safeChromeCall(() => {
   chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
@@ -126,6 +133,10 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
   if (msg?.type === "CLAUDE_VIEW_MODE") {
     viewMode = msg.viewMode ?? "graph";
+    loadAndRender();
+  }
+  if (msg?.type === "CLAUDE_LANG_CHANGE") {
+    currentLang = msg.lang ?? "ja";
     loadAndRender();
   }
 });

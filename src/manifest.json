@@ -15,6 +15,7 @@
       "js": [
         "shared/pageContext.js",
         "shared/constants.js",
+        "shared/i18n.js",
         "content/wide.js",
         "content/usage.js",
         "content/main.js"

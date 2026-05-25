@@ -1,4 +1,4 @@
-// 定数・ユーティリティは shared/constants.js から読み込み済み
+// 定数・ユーティリティは shared/constants.js と shared/i18n.js から読み込み済み
 
 const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
@@ -8,17 +8,17 @@ const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
 const viewBarBtn = document.getElementById("viewBar");
 const viewGraphBtn = document.getElementById("viewGraph");
+const langSelect = document.getElementById("langSelect");
 const pageNotice = document.getElementById("pageNotice");
 const pageNoticeText = document.getElementById("pageNoticeText");
 const mainPanel = document.getElementById("mainPanel");
 const popupFooter = document.getElementById("popupFooter");
 
-const PAGE_NOTICE_MESSAGES = {
-  "not-claude": "claude.ai のチャット画面でご利用ください。",
-  "claude-other": "チャット画面でご利用ください。",
-  unknown:
-    "アクティブなタブを取得できませんでした。Claude のチャット画面で再度お試しください。",
-};
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t(el.dataset.i18n);
+  });
+}
 
 function updatePageNotice(tab) {
   const ctx = getPageContext(tab?.url ?? "");
@@ -27,8 +27,12 @@ function updatePageNotice(tab) {
   mainPanel.hidden = !allowed;
   popupFooter.hidden = !allowed;
   if (allowed) return;
-  pageNoticeText.textContent =
-    PAGE_NOTICE_MESSAGES[ctx] ?? PAGE_NOTICE_MESSAGES.unknown;
+  const messages = {
+    "not-claude": t("noticeNotClaude"),
+    "claude-other": t("noticeClaudeOther"),
+    unknown: t("noticeUnknown"),
+  };
+  pageNoticeText.textContent = messages[ctx] ?? messages.unknown;
 }
 
 async function refreshPageNotice() {
@@ -99,10 +103,17 @@ function saveViewMode(mode) {
   sendToActiveTab({ type: "CLAUDE_VIEW_MODE", viewMode: mode });
 }
 
-refreshPageNotice();
+function saveLang(lang) {
+  currentLang = lang;
+  chrome.storage.local.set({ lang });
+  applyI18n();
+  refreshPageNotice();
+  sendToActiveTab({ type: "CLAUDE_LANG_CHANGE", lang });
+}
 
+// 初期値読み込み
 chrome.storage.local.get(
-  { ...WIDE_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS },
+  { ...WIDE_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS, ...LANG_DEFAULTS },
   (s) => {
     wideEnabledInput.checked = s.wideEnabled;
     setWidth(s.width);
@@ -110,6 +121,10 @@ chrome.storage.local.get(
     usageEnabledInput.checked = usageOn;
     viewModeControl.style.display = usageOn ? "flex" : "none";
     updateViewBtns(s.viewMode ?? "graph");
+    currentLang = s.lang ?? "ja";
+    langSelect.value = currentLang;
+    applyI18n();
+    refreshPageNotice();
   },
 );
 
@@ -137,3 +152,4 @@ wideEnabledInput.addEventListener("change", saveWide);
 usageEnabledInput.addEventListener("change", saveUsage);
 viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
 viewGraphBtn.addEventListener("click", () => saveViewMode("graph"));
+langSelect.addEventListener("change", () => saveLang(langSelect.value));
