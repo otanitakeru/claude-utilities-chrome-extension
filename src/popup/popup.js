@@ -1,10 +1,4 @@
-const WIDE_DEFAULTS = { wideEnabled: true, width: 1000 };
-const USAGE_DEFAULTS = { usageEnabled: true };
-const VIEW_DEFAULTS = { viewMode: "graph" };
-const DEFAULT_WIDTH = 1000;
-const MIN_WIDTH = 650,
-  MAX_WIDTH = 2000;
-const WIDTH_STEP = 10;
+// 定数・ユーティリティは shared/constants.js から読み込み済み
 
 const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
@@ -40,20 +34,6 @@ function updatePageNotice(tab) {
 async function refreshPageNotice() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   updatePageNotice(tab);
-}
-
-function readUsageEnabled(stored) {
-  if (stored.usageEnabled !== undefined) return stored.usageEnabled;
-  if (stored.barEnabled !== undefined) return stored.barEnabled;
-  return true;
-}
-
-function snapWidth(v) {
-  const n = parseInt(v, 10);
-  if (!Number.isFinite(n)) return DEFAULT_WIDTH;
-  const clamped = Math.min(Math.max(n, MIN_WIDTH), MAX_WIDTH);
-  const steps = Math.round((clamped - MIN_WIDTH) / WIDTH_STEP);
-  return MIN_WIDTH + steps * WIDTH_STEP;
 }
 
 function setWidth(value) {
@@ -121,7 +101,6 @@ function saveViewMode(mode) {
 
 refreshPageNotice();
 
-// 初期値読み込み
 chrome.storage.local.get(
   { ...WIDE_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS },
   (s) => {
@@ -134,13 +113,11 @@ chrome.storage.local.get(
   },
 );
 
-// スライダー操作 → number に反映
 widthRange.addEventListener("input", () => {
   widthNumber.value = widthRange.value;
   saveWide();
 });
 
-// テキスト入力 → スライダーに反映（Enterまたはフォーカスアウト時）
 function applyNumberInput() {
   const w = snapWidth(widthNumber.value);
   setWidth(w);
@@ -151,9 +128,8 @@ widthNumber.addEventListener("keydown", (e) => {
   if (e.key === "Enter") applyNumberInput();
 });
 
-// デフォルトに戻す
 resetWidthBtn.addEventListener("click", () => {
-  setWidth(DEFAULT_WIDTH);
+  setWidth(WIDE_DEFAULTS.width);
   saveWide();
 });
 

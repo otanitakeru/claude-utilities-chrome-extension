@@ -28,3 +28,7 @@ function getPageContext(url) {
   if (!isAllowedClaudePage(url)) return "claude-other";
   return "allowed";
 }
+
+function isAllowedPage() {
+  return isAllowedClaudePage(location.href);
+}

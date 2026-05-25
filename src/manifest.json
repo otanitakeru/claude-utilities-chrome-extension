@@ -7,13 +7,19 @@
   "host_permissions": ["https://claude.ai/*"],
   "action": {
     "default_title": "Claude Utilities",
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   },
   "content_scripts": [
     {
       "matches": ["https://claude.ai/*", "https://claude.com/*"],
-      "js": ["pageContext.js", "content.js"],
-      "css": ["content.css"],
+      "js": [
+        "shared/pageContext.js",
+        "shared/constants.js",
+        "content/wide.js",
+        "content/usage.js",
+        "content/main.js"
+      ],
+      "css": ["content/content.css"],
       "run_at": "document_idle"
     }
   ],
