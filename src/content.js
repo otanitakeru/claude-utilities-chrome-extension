@@ -5,6 +5,9 @@
 
 // ── Extension context 管理 ───────────────────────────────
 let contextInvalidated = false;
+let domObserver = null;
+let wasGenerating = false;
+let lastPath = location.pathname;
 
 function invalidateContext() {
   if (contextInvalidated) return;
@@ -13,10 +16,7 @@ function invalidateContext() {
     "[ClaudeUsage] Extension context invalidated, stopping all observers.",
   );
   try {
-    stopBtnObserver?.disconnect();
-  } catch (_) {}
-  try {
-    spaObserver?.disconnect();
+    domObserver?.disconnect();
   } catch (_) {}
 }
 
@@ -136,11 +136,14 @@ let usageEnabled = true;
 let viewMode = "graph";
 
 function readUsageEnabled(stored) {
-  return stored.usageEnabled ?? true;
+  if (stored.usageEnabled !== undefined) return stored.usageEnabled;
+  if (stored.barEnabled !== undefined) return stored.barEnabled;
+  return true;
 }
 
 function getColor(utilization) {
-  return 100 - (utilization ?? 100) < 10 ? "#E53E3E" : "#D97757";
+  if (utilization === null) return "#aaa";
+  return 100 - utilization < 10 ? "#E53E3E" : "#D97757";
 }
 function formatPct(pct) {
   return pct === null ? "---" : Math.round(pct) + "%";
@@ -433,24 +436,7 @@ function findStopButton() {
   return null;
 }
 
-let wasGenerating = false;
-
-const stopBtnObserver = new MutationObserver(() => {
-  if (contextInvalidated) return;
-  const isGenerating = !!findStopButton();
-  if (wasGenerating && !isGenerating) triggerRefresh("stop-button-gone", 1500);
-  wasGenerating = isGenerating;
-  if (
-    isAllowedPage() &&
-    usageEnabled &&
-    !document.getElementById(USAGE_ROOT_ID)
-  )
-    setTimeout(loadAndRender, 500);
-});
-stopBtnObserver.observe(document.body, { childList: true, subtree: true });
-
-let lastPath = location.pathname;
-const spaObserver = new MutationObserver(() => {
+domObserver = new MutationObserver(() => {
   if (contextInvalidated) return;
   if (location.pathname !== lastPath) {
     lastPath = location.pathname;
@@ -465,15 +451,24 @@ const spaObserver = new MutationObserver(() => {
     }, "wide.spa");
     setTimeout(loadAndRender, 800);
   }
+  const isGenerating = !!findStopButton();
+  if (wasGenerating && !isGenerating) triggerRefresh("stop-button-gone", 1500);
+  wasGenerating = isGenerating;
+  if (
+    isAllowedPage() &&
+    usageEnabled &&
+    !document.getElementById(USAGE_ROOT_ID)
+  )
+    setTimeout(loadAndRender, 500);
 });
-spaObserver.observe(document.body, { childList: true, subtree: true });
+domObserver.observe(document.body, { childList: true, subtree: true });
 
 document.addEventListener("visibilitychange", () => {
   if (contextInvalidated) return;
   if (document.hidden) {
-    stopBtnObserver.disconnect();
+    domObserver.disconnect();
   } else {
-    stopBtnObserver.observe(document.body, { childList: true, subtree: true });
+    domObserver.observe(document.body, { childList: true, subtree: true });
     if (isAllowedPage()) {
       safeChromeCall(() => {
         chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);

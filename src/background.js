@@ -43,7 +43,9 @@ async function fetchUsage() {
       usageData: parsed,
       lastUpdated: Date.now(),
     });
-  } catch (_) {}
+  } catch (e) {
+    console.warn("[ClaudeUsage] fetchUsage failed:", e?.message ?? e);
+  }
 }
 
 chrome.runtime.onInstalled.addListener(() => {
