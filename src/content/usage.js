@@ -23,7 +23,9 @@ function formatResetsAtRelative(isoStr) {
 
 function formatResetsAtWeekday(isoStr) {
   if (!isoStr) return null;
-  return t("weekday", new Date(isoStr).getDay());
+  const diffMs = new Date(isoStr) - Date.now();
+  if (diffMs <= 0) return t("soon");
+  return t("daysRemaining", Math.ceil(diffMs / 86400000));
 }
 
 function formatCredit(raw) {
@@ -132,7 +134,7 @@ function buildGraphHTML(data) {
     .map(
       ({ pct, reset, color }) => `<div class="cug-item">
       ${buildDonutSVG(pct, color)}
-      ${reset ? `<div class="cug-reset">${reset}</div>` : ""}
+      <div class="cug-reset"${reset ? "" : ' style="visibility:hidden"'}>${reset ?? " "}</div>
     </div>`,
     )
     .join("");

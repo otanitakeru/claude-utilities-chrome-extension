@@ -1,58 +1,68 @@
 # Changelog
 
+## v1.1.4 - 2026-05-25
+
+### Added
+
+- Japanese and English UI for popup settings, usage overlay labels, and page notices
+
+### Changed
+
+- Weekly quota reset label now shows days remaining (e.g. `in 3 days` / `3日後`) instead of weekday name; shows “Soon” when the reset time has passed
+
 ## v1.1.3 - 2026-05-25
 
-### 変更
+### Changed
 
-- チャット画面（`/new`、`/chat/*`）でのみチャット幅調整・使用量表示を有効化
-- ポップアップはチャット画面以外では案内メッセージを表示し、設定パネルを非表示に
+- Chat width and usage display are now only active on chat pages (`/new`, `/chat/*`)
+- Popup shows a notice message and hides the settings panel on non-chat pages
 
-### 修正
+### Fixed
 
-- 使用量が取得できないときの表示色を修正
+- Fixed display color when usage data is unavailable
 
 ## v1.1.2 - 2026-05-25
 
-### 修正
+### Fixed
 
-- ログアウト時の挙動や無料プラン向けの挙動等を修正
+- Fixed behavior on logout and for free plan users
 
 ## v1.1.1 - 2026-05-25
 
-###　変更
+### Changed
 
-- 軽微な修正
+- Minor fixes
 
 ## v1.1.0 - 2026-05-25
 
-### 追加
+### Added
 
-- 使用量のグラフ表示（ドーナツチャート）を追加
-- ポップアップからバー表示とグラフ表示を切り替え可能に
+- Donut chart view for usage display
+- Toggle between bar and graph view from the popup
 
-### 変更
+### Changed
 
-- チャット幅のデフォルトを 1000px に、調整範囲を 650〜2000px に変更
-- 使用量表示の背景透過から不透明に変更
+- Default chat width changed to 1000px, range changed to 650–2000px
+- Usage display background changed from transparent to opaque
 
 ## v1.0.2 - 2026-05-25
 
-### 修正
+### Fixed
 
-- ポップアップ設定のバグを修正
+- Fixed a bug in popup settings
 
 ## v1.0.1 - 2026-05-25
 
-### 変更
+### Changed
 
-- ポップアップUIの改善
+- Improved popup UI
 
 ## v1.0.0 - 2026-05-24
 
-### 追加
+### Added
 
-- 使用量バー（5時間枠・週間枠・追加枠）
-- Claudeの返答完了後に使用量を自動更新
-- チャット幅調整機能（800〜2000px）
-- ポップアップUI（スライダー・数値入力・デフォルトに戻すボタン）
-- 非アクティブタブでの監視停止
+- Usage bar (5-hour session, weekly, and extra quota)
+- Auto-refresh usage after Claude finishes responding
+- Chat width adjustment (800–2000px)
+- Popup UI (slider, number input, reset to default button)
+- Pause monitoring on inactive tabs

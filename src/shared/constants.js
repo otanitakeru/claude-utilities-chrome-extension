@@ -10,7 +10,7 @@ const WIDE_WIDTH_STEP = 10;
 
 const USAGE_DEFAULTS = { usageEnabled: true };
 const VIEW_DEFAULTS = { viewMode: "graph" };
-const LANG_DEFAULTS = { lang: "ja" };
+const LANG_DEFAULTS = { lang: "en" };
 
 function snapWidth(value) {
   const n = Number(value);

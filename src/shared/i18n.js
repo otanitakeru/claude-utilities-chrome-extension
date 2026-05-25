@@ -1,6 +1,6 @@
 /** Claude Utilities — 翻訳（content / popup 共通） */
 
-let currentLang = "ja";
+let currentLang = "en";
 
 const MESSAGES = {
   ja: {
@@ -22,7 +22,7 @@ const MESSAGES = {
     soon: "まもなく",
     updatedAt: (h, m) => `${h}:${m} 更新`,
     timeRemaining: (h, m) => h > 0 ? `${h}時間${m}分後` : `${m}分後`,
-    weekday: (d) => ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"][d],
+    daysRemaining: (d) => `${d}日後`,
   },
   en: {
     sectionChatWidth: "Chat Width",
@@ -43,7 +43,7 @@ const MESSAGES = {
     soon: "Soon",
     updatedAt: (h, m) => `Updated ${h}:${m}`,
     timeRemaining: (h, m) => h > 0 ? `in ${h}h ${m}m` : `in ${m}m`,
-    weekday: (d) => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d],
+    daysRemaining: (d) => d === 1 ? "in 1 day" : `in ${d} days`,
   },
 };
 
