@@ -221,6 +221,22 @@
         margin-top: 4px;
         line-height: 1.5;
       }
+
+      .page-notice {
+        background: #fdf6f3;
+        border: 1px solid #f0d4c8;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        line-height: 1.55;
+        color: #6b4f42;
+      }
+      .page-notice[hidden],
+      .main-panel[hidden],
+      .footer[hidden] {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -502,6 +518,11 @@
       <span class="header-title">Claude Utilities</span>
     </div>
 
+    <div id="pageNotice" class="page-notice" hidden>
+      <p id="pageNoticeText"></p>
+    </div>
+
+    <div id="mainPanel" class="main-panel">
     <div class="section">
       <div class="section-header">
         <span class="section-title">チャット幅</span>
@@ -540,9 +561,11 @@
         <button class="view-mode-btn" id="viewBar">バー</button>
       </div>
     </div>
+    </div>
 
-    <p class="footer">反映されない場合はページを再読み込みしてください</p>
+    <p class="footer" id="popupFooter">反映されない場合はページを再読み込みしてください</p>
 
+    <script src="pageContext.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

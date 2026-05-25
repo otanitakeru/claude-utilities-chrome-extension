@@ -14,6 +14,33 @@ const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
 const viewBarBtn = document.getElementById("viewBar");
 const viewGraphBtn = document.getElementById("viewGraph");
+const pageNotice = document.getElementById("pageNotice");
+const pageNoticeText = document.getElementById("pageNoticeText");
+const mainPanel = document.getElementById("mainPanel");
+const popupFooter = document.getElementById("popupFooter");
+
+const PAGE_NOTICE_MESSAGES = {
+  "not-claude": "claude.ai のチャット画面でご利用ください。",
+  "claude-other": "チャット画面でご利用ください。",
+  unknown:
+    "アクティブなタブを取得できませんでした。Claude のチャット画面で再度お試しください。",
+};
+
+function updatePageNotice(tab) {
+  const ctx = getPageContext(tab?.url ?? "");
+  const allowed = ctx === "allowed";
+  pageNotice.hidden = allowed;
+  mainPanel.hidden = !allowed;
+  popupFooter.hidden = !allowed;
+  if (allowed) return;
+  pageNoticeText.textContent =
+    PAGE_NOTICE_MESSAGES[ctx] ?? PAGE_NOTICE_MESSAGES.unknown;
+}
+
+async function refreshPageNotice() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  updatePageNotice(tab);
+}
 
 function readUsageEnabled(stored) {
   if (stored.usageEnabled !== undefined) return stored.usageEnabled;
@@ -35,17 +62,22 @@ function setWidth(value) {
   widthNumber.value = w;
 }
 
-async function notifyActiveTab(settings) {
+async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return;
+  return tab ?? null;
+}
+
+async function notifyActiveTab(settings) {
+  const tab = await getActiveTab();
+  if (!tab?.id || !isAllowedClaudePage(tab.url ?? "")) return;
   chrome.tabs
     .sendMessage(tab.id, { type: "CLAUDE_WIDE_CHAT_APPLY", ...settings })
     .catch(() => {});
 }
 
 async function sendToActiveTab(msg) {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return;
+  const tab = await getActiveTab();
+  if (!tab?.id || !isAllowedClaudePage(tab.url ?? "")) return;
   chrome.tabs.sendMessage(tab.id, msg).catch(() => {});
 }
 
@@ -68,11 +100,8 @@ function saveUsage() {
     const enabled = usageEnabledInput.checked;
     chrome.storage.local.set({ usageEnabled: enabled });
     viewModeControl.style.display = enabled ? "flex" : "none";
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      currentWindow: true,
-    });
-    if (!tab?.id) return;
+    const tab = await getActiveTab();
+    if (!tab?.id || !isAllowedClaudePage(tab.url ?? "")) return;
     chrome.tabs
       .sendMessage(tab.id, { type: "CLAUDE_USAGE_TOGGLE", enabled })
       .catch(() => {});
@@ -89,6 +118,8 @@ function saveViewMode(mode) {
   updateViewBtns(mode);
   sendToActiveTab({ type: "CLAUDE_VIEW_MODE", viewMode: mode });
 }
+
+refreshPageNotice();
 
 // 初期値読み込み
 chrome.storage.local.get(

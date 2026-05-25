@@ -37,6 +37,14 @@ function safeChromeCall(fn, label = "unknown") {
   }
 }
 
+function isAllowedPage() {
+  return isAllowedClaudePage(location.href);
+}
+
+function removeWideStyle() {
+  document.getElementById(STYLE_ID)?.remove();
+}
+
 // ════════════════════════════════════════════════════════
 //  ① チャット幅調整
 // ════════════════════════════════════════════════════════
@@ -97,6 +105,10 @@ function buildWideCss(enabled, width, padding) {
 }
 
 function applyWideSettings(s) {
+  if (!isAllowedPage()) {
+    removeWideStyle();
+    return;
+  }
   let style = document.getElementById(STYLE_ID);
   if (!style) {
     style = document.createElement("style");
@@ -311,7 +323,7 @@ function applyUsageRootBackground(root) {
 }
 
 function mountUsage(data) {
-  if (!usageEnabled || !data) {
+  if (!isAllowedPage() || !usageEnabled || !data) {
     removeUsage();
     return true;
   }
@@ -366,6 +378,10 @@ function findInsertTarget() {
 }
 
 function loadAndRender() {
+  if (!isAllowedPage()) {
+    removeUsage();
+    return;
+  }
   safeChromeCall(() => {
     chrome.storage.local.get(["usageData", "lastUpdated"], (result) => {
       if (contextInvalidated || !result) return;
@@ -394,7 +410,7 @@ function sendMessageSafe(msg, callback) {
 
 let refreshTimer = null;
 function triggerRefresh(reason, delayMs = 0) {
-  if (contextInvalidated) return;
+  if (contextInvalidated || !isAllowedPage()) return;
   if (refreshTimer) clearTimeout(refreshTimer);
   refreshTimer = setTimeout(() => {
     if (contextInvalidated) return;
@@ -424,7 +440,11 @@ const stopBtnObserver = new MutationObserver(() => {
   const isGenerating = !!findStopButton();
   if (wasGenerating && !isGenerating) triggerRefresh("stop-button-gone", 1500);
   wasGenerating = isGenerating;
-  if (usageEnabled && !document.getElementById(USAGE_ROOT_ID))
+  if (
+    isAllowedPage() &&
+    usageEnabled &&
+    !document.getElementById(USAGE_ROOT_ID)
+  )
     setTimeout(loadAndRender, 500);
 });
 stopBtnObserver.observe(document.body, { childList: true, subtree: true });
@@ -435,6 +455,14 @@ const spaObserver = new MutationObserver(() => {
   if (location.pathname !== lastPath) {
     lastPath = location.pathname;
     wasGenerating = false;
+    if (!isAllowedPage()) {
+      removeUsage();
+      removeWideStyle();
+      return;
+    }
+    safeChromeCall(() => {
+      chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
+    }, "wide.spa");
     setTimeout(loadAndRender, 800);
   }
 });
@@ -446,7 +474,15 @@ document.addEventListener("visibilitychange", () => {
     stopBtnObserver.disconnect();
   } else {
     stopBtnObserver.observe(document.body, { childList: true, subtree: true });
-    loadAndRender();
+    if (isAllowedPage()) {
+      safeChromeCall(() => {
+        chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
+      }, "wide.visibility");
+      loadAndRender();
+    } else {
+      removeUsage();
+      removeWideStyle();
+    }
   }
 });
 
@@ -459,6 +495,10 @@ safeChromeCall(() => {
     safeChromeCall(() => {
       chrome.storage.local.get(["usageData", "lastUpdated"], (result) => {
         if (contextInvalidated || !result) return;
+        if (!isAllowedPage()) {
+          removeUsage();
+          return;
+        }
         mountUsage(result.usageData ?? null);
         updateTimestamp(result.lastUpdated);
       });
@@ -493,6 +533,10 @@ safeChromeCall(() => {
   chrome.storage.local.get({ ...USAGE_DEFAULTS, viewMode: "graph" }, (s) => {
     usageEnabled = readUsageEnabled(s);
     viewMode = s.viewMode ?? "graph";
+    if (!isAllowedPage()) {
+      removeUsage();
+      return;
+    }
     loadAndRender();
     triggerRefresh("page-load", 250);
   });
