@@ -18,6 +18,7 @@
         "shared/i18n.js",
         "content/wide.js",
         "content/usage.js",
+        "content/sidebar.js",
         "content/main.js"
       ],
       "css": ["content/content.css"],

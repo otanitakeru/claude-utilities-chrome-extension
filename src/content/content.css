@@ -1,10 +1,44 @@
+/* ── サイドバー リサイズハンドル ────────────────────────── */
+.cub-sidebar-handle {
+  position: fixed;
+  top: 0;
+  width: 6px;
+  height: 100vh;
+  cursor: col-resize;
+  z-index: 9999;
+  background: transparent;
+  transition: background 0.2s;
+}
+.cub-sidebar-handle:hover,
+.cub-sidebar-handle.dragging {
+  background: rgba(217, 119, 87, 0.3);
+}
+
+/* ── 使用量バー ──────────────────────────────────────────── */
 #claude-usage-root {
+  --cub-fade-height: 75px;
+  position: relative;
   width: 100%;
   padding: 6px 12px 4px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   /* Claude 本家に合わせる（JS で computed 値に上書き） */
   background-color: light-dark(#faf9f5, #30302e);
+}
+
+#claude-usage-root::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--cub-fade-height) * -1);
+  left: 0;
+  right: 0;
+  height: var(--cub-fade-height);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--cub-bg, light-dark(#faf9f5, #30302e))
+  );
+  pointer-events: none;
 }
 
 .cub-inner {

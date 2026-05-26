@@ -1,3 +1,7 @@
+async function clearUsageCache() {
+  await chrome.storage.local.remove(["usageData", "lastUpdated"]);
+}
+
 async function fetchUsage() {
   try {
     const orgRes = await fetch("https://claude.ai/api/organizations", {
@@ -5,7 +9,7 @@ async function fetchUsage() {
     });
     if (!orgRes.ok) {
       if (orgRes.status === 401 || orgRes.status === 403) {
-        await chrome.storage.local.remove(["usageData", "lastUpdated"]);
+        await clearUsageCache();
       }
       return;
     }
@@ -15,7 +19,7 @@ async function fetchUsage() {
       orgs.find((o) => o.capabilities?.includes("chat")) ??
       orgs[0];
     if (!org) {
-      await chrome.storage.local.remove(["usageData", "lastUpdated"]);
+      await clearUsageCache();
       return;
     }
 
@@ -25,7 +29,7 @@ async function fetchUsage() {
     );
     if (!usageRes.ok) {
       if (usageRes.status === 401 || usageRes.status === 403) {
-        await chrome.storage.local.remove(["usageData", "lastUpdated"]);
+        await clearUsageCache();
       }
       return;
     }

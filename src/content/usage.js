@@ -169,6 +169,7 @@ function applyUsageRootBackground(root) {
     const bg = getComputedStyle(el).backgroundColor;
     if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
       root.style.backgroundColor = bg;
+      root.style.setProperty("--cub-bg", bg);
       return;
     }
     el = el.parentElement;
@@ -178,6 +179,7 @@ function applyUsageRootBackground(root) {
     const bg = getComputedStyle(fallback).backgroundColor;
     if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
       root.style.backgroundColor = bg;
+      root.style.setProperty("--cub-bg", bg);
       return;
     }
   }

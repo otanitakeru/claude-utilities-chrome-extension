@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════
 //  Claude Utilities — content script エントリーポイント
-//  読み込み順: pageContext.js → constants.js → wide.js → usage.js → main.js
+//  読み込み順: pageContext.js → constants.js → i18n.js → wide.js → usage.js → sidebar.js → main.js
 // ════════════════════════════════════════════════════════
 
 // ── Extension context 管理 ───────────────────────────────
@@ -19,6 +19,7 @@ function invalidateContext() {
   );
   try {
     domObserver?.disconnect();
+    teardownSidebarObserver();
   } catch (_) {}
 }
 
@@ -39,17 +40,45 @@ function safeChromeCall(fn, label = "unknown") {
   }
 }
 
-// ── 言語 初期化 ──────────────────────────────────────────
-safeChromeCall(() => {
-  chrome.storage.local.get(LANG_DEFAULTS, (s) => {
-    currentLang = s.lang ?? "ja";
-  });
-}, "lang.init");
+// ── 共通ヘルパー ─────────────────────────────────────────
 
-// ── チャット幅 初期化 ────────────────────────────────────
+/** コンテンツ UI をすべて解除する */
+function teardownContentUI() {
+  removeUsage();
+  removeWideStyle();
+  removeSidebarStyle();
+  teardownSidebarObserver();
+}
+
+/** レイアウト設定（幅・サイドバー）をストレージから再適用する */
+function reapplyLayoutSettings(label) {
+  safeChromeCall(() => {
+    chrome.storage.local.get({ ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS }, (s) => {
+      applyWideSettings(s);
+      applySidebarSettings(s);
+    });
+  }, label);
+}
+
+// ── 初期化 ───────────────────────────────────────────────
 safeChromeCall(() => {
-  chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
-}, "wide.init");
+  chrome.storage.local.get(
+    { ...LANG_DEFAULTS, ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS, ...USAGE_DEFAULTS, viewMode: "graph" },
+    (s) => {
+      currentLang = s.lang ?? "en";
+      applyWideSettings(s);
+      applySidebarSettings(s);
+      usageEnabled = readUsageEnabled(s);
+      viewMode = s.viewMode ?? "graph";
+      if (!isAllowedPage()) {
+        removeUsage();
+        return;
+      }
+      loadAndRender();
+      triggerRefresh("page-load", 250);
+    },
+  );
+}, "init");
 
 // ── DOM Observer ─────────────────────────────────────────
 domObserver = new MutationObserver(() => {
@@ -58,13 +87,10 @@ domObserver = new MutationObserver(() => {
     lastPath = location.pathname;
     wasGenerating = false;
     if (!isAllowedPage()) {
-      removeUsage();
-      removeWideStyle();
+      teardownContentUI();
       return;
     }
-    safeChromeCall(() => {
-      chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
-    }, "wide.spa");
+    reapplyLayoutSettings("layout.spa");
     setTimeout(loadAndRender, 800);
   }
   const isGenerating = !!findStopButton();
@@ -76,6 +102,8 @@ domObserver = new MutationObserver(() => {
     !document.getElementById(USAGE_ROOT_ID)
   )
     setTimeout(loadAndRender, 500);
+  // Retry sidebar observer if not yet attached (e.g. nav just appeared in DOM)
+  if (sidebarEnabled && !sidebarObserver) initSidebarDisplay();
 });
 domObserver.observe(document.body, { childList: true, subtree: true });
 
@@ -86,13 +114,10 @@ document.addEventListener("visibilitychange", () => {
   } else {
     domObserver.observe(document.body, { childList: true, subtree: true });
     if (isAllowedPage()) {
-      safeChromeCall(() => {
-        chrome.storage.local.get(WIDE_DEFAULTS, applyWideSettings);
-      }, "wide.visibility");
+      reapplyLayoutSettings("layout.visibility");
       loadAndRender();
     } else {
-      removeUsage();
-      removeWideStyle();
+      teardownContentUI();
     }
   }
 });
@@ -136,21 +161,10 @@ chrome.runtime.onMessage.addListener((msg) => {
     loadAndRender();
   }
   if (msg?.type === "CLAUDE_LANG_CHANGE") {
-    currentLang = msg.lang ?? "ja";
+    currentLang = msg.lang ?? "en";
     loadAndRender();
   }
+  if (msg?.type === "CLAUDE_SIDEBAR_APPLY") {
+    applySidebarSettings(msg);
+  }
 });
-
-// ── 初期化 ───────────────────────────────────────────────
-safeChromeCall(() => {
-  chrome.storage.local.get({ ...USAGE_DEFAULTS, viewMode: "graph" }, (s) => {
-    usageEnabled = readUsageEnabled(s);
-    viewMode = s.viewMode ?? "graph";
-    if (!isAllowedPage()) {
-      removeUsage();
-      return;
-    }
-    loadAndRender();
-    triggerRefresh("page-load", 250);
-  });
-}, "usage.init");

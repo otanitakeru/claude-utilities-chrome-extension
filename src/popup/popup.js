@@ -4,6 +4,7 @@ const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
 const widthNumber = document.getElementById("widthNumber");
 const resetWidthBtn = document.getElementById("resetWidth");
+const sidebarEnabledInput = document.getElementById("sidebarEnabled");
 const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
 const viewBarBtn = document.getElementById("viewBar");
@@ -77,6 +78,20 @@ function saveWide() {
   wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 250);
 }
 
+let sidebarDebounceTimer = null;
+function saveSidebar() {
+  const settings = { sidebarEnabled: sidebarEnabledInput.checked };
+  chrome.storage.local.set(settings);
+  if (sidebarDebounceTimer) clearTimeout(sidebarDebounceTimer);
+  sidebarDebounceTimer = setTimeout(async () => {
+    const tab = await getActiveTab();
+    if (!tab?.id || !isAllowedClaudePage(tab.url ?? "")) return;
+    chrome.tabs
+      .sendMessage(tab.id, { type: "CLAUDE_SIDEBAR_APPLY", ...settings })
+      .catch(() => {});
+  }, 250);
+}
+
 let usageDebounceTimer = null;
 function saveUsage() {
   if (usageDebounceTimer) clearTimeout(usageDebounceTimer);
@@ -113,15 +128,16 @@ function saveLang(lang) {
 
 // 初期値読み込み
 chrome.storage.local.get(
-  { ...WIDE_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS, ...LANG_DEFAULTS },
+  { ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS, ...LANG_DEFAULTS },
   (s) => {
     wideEnabledInput.checked = s.wideEnabled;
     setWidth(s.width);
+    sidebarEnabledInput.checked = s.sidebarEnabled ?? false;
     const usageOn = readUsageEnabled(s);
     usageEnabledInput.checked = usageOn;
     viewModeControl.style.display = usageOn ? "flex" : "none";
     updateViewBtns(s.viewMode ?? "graph");
-    currentLang = s.lang ?? "ja";
+    currentLang = s.lang ?? "en";
     langSelect.value = currentLang;
     applyI18n();
     refreshPageNotice();
@@ -149,6 +165,9 @@ resetWidthBtn.addEventListener("click", () => {
 });
 
 wideEnabledInput.addEventListener("change", saveWide);
+
+sidebarEnabledInput.addEventListener("change", saveSidebar);
+
 usageEnabledInput.addEventListener("change", saveUsage);
 viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
 viewGraphBtn.addEventListener("click", () => saveViewMode("graph"));

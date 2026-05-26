@@ -5,6 +5,7 @@ let currentLang = "en";
 const MESSAGES = {
   ja: {
     sectionChatWidth: "チャット幅",
+    sectionSidebar: "サイドバー",
     sectionUsage: "使用量",
     sectionLanguage: "言語",
     viewGraph: "グラフ",
@@ -26,6 +27,7 @@ const MESSAGES = {
   },
   en: {
     sectionChatWidth: "Chat Width",
+    sectionSidebar: "Sidebar",
     sectionUsage: "Usage",
     sectionLanguage: "Language",
     viewGraph: "Graph",
