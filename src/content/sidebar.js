@@ -33,7 +33,7 @@ function findWrapper(sidebar) {
   return sidebar?.closest(".z-sidebar") || sidebar?.parentElement || null;
 }
 
-function applyWidthToSidebar(sidebar, widthPx) {
+function applyWidthToSidebar(sidebar, widthRem) {
   const wrapper = findWrapper(sidebar);
   // 初回適用時のみ Claude の元の幅を保存
   if (_originalWidth === null) {
@@ -42,7 +42,7 @@ function applyWidthToSidebar(sidebar, widthPx) {
   if (_originalWrapperWidth === null && wrapper && wrapper !== sidebar) {
     _originalWrapperWidth = wrapper.style.width || null;
   }
-  const w = `${widthPx}px`;
+  const w = `${widthRem}rem`;
   _lastSetWidth = w;
   // nav（視覚的な幅）と sticky wrapper（レイアウトスペース）の両方を更新
   sidebar.style.width = w;
@@ -73,14 +73,14 @@ function isCollapsedByStyle(sidebar) {
   if (!w || w === _lastSetWidth) return false;
   let rem;
   if (w.endsWith("rem")) rem = parseFloat(w);
-  else if (w.endsWith("px")) rem = parseFloat(w) / 16;
+  else if (w.endsWith("px")) rem = parseFloat(w) / rootFontSizePx();
   else return false;
   return rem <= SIDEBAR_COLLAPSED_REM;
 }
 
 function isCollapsedByPosition(sidebar) {
   const rect = sidebar.getBoundingClientRect();
-  return rect.right > 0 && rect.right < SIDEBAR_MIN_WIDTH;
+  return rect.right > 0 && rect.right < SIDEBAR_MIN_WIDTH * rootFontSizePx();
 }
 
 function isSidebarCollapsed(sidebar) {
@@ -94,7 +94,7 @@ function positionHandle(sidebar) {
   if (!handle) return;
   const rect = sidebar.getBoundingClientRect();
   const leftPx = rect.right - 3;
-  if (leftPx < SIDEBAR_MIN_WIDTH - 6) {
+  if (leftPx < SIDEBAR_MIN_WIDTH * rootFontSizePx() - 6) {
     handle.style.display = "none";
     return;
   }
@@ -116,13 +116,13 @@ function mountSidebarHandle(sidebar) {
   handle.addEventListener("mousedown", (e) => {
     e.preventDefault();
     const startX = e.clientX;
-    const startWidth = sidebar.getBoundingClientRect().width;
+    const startWidthRem = sidebar.getBoundingClientRect().width / rootFontSizePx();
     handle.classList.add("dragging");
     document.body.style.cursor = "col-resize";
     document.body.style.userSelect = "none";
 
     function onMove(e) {
-      const newWidth = snapSidebarWidth(startWidth + (e.clientX - startX));
+      const newWidth = snapSidebarWidth(startWidthRem + (e.clientX - startX) / rootFontSizePx());
       currentSidebarWidth = newWidth;
       applyWidthToSidebar(sidebar, newWidth);
       positionHandle(sidebar);

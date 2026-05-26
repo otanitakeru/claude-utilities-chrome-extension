@@ -12,10 +12,10 @@ const USAGE_DEFAULTS = { usageEnabled: true };
 const VIEW_DEFAULTS = { viewMode: "graph" };
 const LANG_DEFAULTS = { lang: "en" };
 
-const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 288 };
-const SIDEBAR_MIN_WIDTH = 64;
-const SIDEBAR_MAX_WIDTH = 480;
-const SIDEBAR_WIDTH_STEP = 4;
+const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 18 };
+const SIDEBAR_MIN_WIDTH = 8;
+const SIDEBAR_MAX_WIDTH = 30;
+const SIDEBAR_WIDTH_STEP = 0.25;
 const SIDEBAR_COLLAPSED_REM = 3.1;
 
 function snapSidebarWidth(value) {
@@ -32,6 +32,10 @@ function snapWidth(value) {
   const clamped = Math.min(Math.max(n, WIDE_MIN_WIDTH), WIDE_MAX_WIDTH);
   const steps = Math.round((clamped - WIDE_MIN_WIDTH) / WIDE_WIDTH_STEP);
   return WIDE_MIN_WIDTH + steps * WIDE_WIDTH_STEP;
+}
+
+function rootFontSizePx() {
+  return parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
 function readUsageEnabled(stored) {
