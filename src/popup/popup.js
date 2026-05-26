@@ -4,7 +4,9 @@ const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
 const widthNumber = document.getElementById("widthNumber");
 const resetWidthBtn = document.getElementById("resetWidth");
+const chatWidthSection = document.getElementById("chatWidthSection");
 const sidebarEnabledInput = document.getElementById("sidebarEnabled");
+const usageSection = document.getElementById("usageSection");
 const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
 const viewBarBtn = document.getElementById("viewBar");
@@ -23,17 +25,24 @@ function applyI18n() {
 
 function updatePageNotice(tab) {
   const ctx = getPageContext(tab?.url ?? "");
-  const allowed = ctx === "allowed";
-  pageNotice.hidden = allowed;
-  mainPanel.hidden = !allowed;
-  popupFooter.hidden = !allowed;
-  if (allowed) return;
-  const messages = {
-    "not-claude": t("noticeNotClaude"),
-    "claude-other": t("noticeClaudeOther"),
-    unknown: t("noticeUnknown"),
-  };
-  pageNoticeText.textContent = messages[ctx] ?? messages.unknown;
+  const isChat = ctx === "chat";
+  const isClaude = isChat || ctx === "claude";
+
+  pageNotice.hidden = isClaude;
+  mainPanel.hidden = !isClaude;
+  popupFooter.hidden = !isClaude;
+
+  // チャット画面専用セクションの表示切り替え
+  chatWidthSection.hidden = !isChat;
+  usageSection.hidden = !isChat;
+
+  if (!isClaude) {
+    const messages = {
+      "not-claude": t("noticeNotClaude"),
+      unknown: t("noticeUnknown"),
+    };
+    pageNoticeText.textContent = messages[ctx] ?? messages.unknown;
+  }
 }
 
 async function refreshPageNotice() {

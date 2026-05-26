@@ -231,7 +231,7 @@ function applySidebarSettings(s) {
     currentSidebarWidth = snapSidebarWidth(s.sidebarWidth);
   }
 
-  if (!sidebarEnabled || !isAllowedPage()) {
+  if (!sidebarEnabled || !isClaudePage()) {
     removeSidebarStyle();
     removeSidebarHandle();
     teardownSidebarObserver();

@@ -5,7 +5,7 @@
   width: 6px;
   height: 100vh;
   cursor: col-resize;
-  z-index: 9999;
+  z-index: 40; /* .z-popover (50) より下 */
   background: transparent;
   transition: background 0.2s;
 }
