@@ -13,7 +13,7 @@ const VIEW_DEFAULTS = { viewMode: "graph" };
 const LANG_DEFAULTS = { lang: "en" };
 
 const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 18 };
-const SIDEBAR_MIN_WIDTH = 8;
+const SIDEBAR_MIN_WIDTH = 8.75;
 const SIDEBAR_MAX_WIDTH = 30;
 const SIDEBAR_WIDTH_STEP = 0.25;
 const SIDEBAR_COLLAPSED_REM = 3.1;
