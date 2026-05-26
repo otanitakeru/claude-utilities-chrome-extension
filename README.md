@@ -17,6 +17,14 @@ Freely adjust the maximum width of the chat area.
 - Configurable between 650–2000px (default: 1000px)
 - Set via slider or numeric input in the extension popup
 
+### Sidebar Width
+
+Freely adjust the width of Claude's sidebar.
+
+- Enable/disable from the extension popup
+- Drag the handle on the right edge of the sidebar to resize
+- Desktop only (viewport width ≥ 1024px)
+
 ### Usage
 
 Displays real-time usage above the chat input.
