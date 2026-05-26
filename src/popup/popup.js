@@ -94,7 +94,7 @@ function saveSidebar() {
   if (sidebarDebounceTimer) clearTimeout(sidebarDebounceTimer);
   sidebarDebounceTimer = setTimeout(async () => {
     const tab = await getActiveTab();
-    if (!tab?.id || !isAllowedClaudePage(tab.url ?? "")) return;
+    if (!tab?.id || !isClaudeHost(tab.url ?? "")) return;
     chrome.tabs
       .sendMessage(tab.id, { type: "CLAUDE_SIDEBAR_APPLY", ...settings })
       .catch(() => {});
