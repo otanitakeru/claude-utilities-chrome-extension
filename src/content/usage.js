@@ -25,7 +25,8 @@ function formatResetsAtWeekday(isoStr) {
   if (!isoStr) return null;
   const diffMs = new Date(isoStr) - Date.now();
   if (diffMs <= 0) return t("soon");
-  return t("daysRemaining", Math.ceil(diffMs / 86400000));
+  if (diffMs < 86400000) return formatResetsAtRelative(isoStr);
+  return t("daysRemaining", Math.floor(diffMs / 86400000));
 }
 
 function formatCredit(raw) {
