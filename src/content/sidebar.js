@@ -210,9 +210,9 @@ function reinitSidebarObserver() {
 // ── 初期化 ───────────────────────────────────────────────
 
 function initSidebarDisplay() {
-  if (!isDesktopViewport()) return true; // モバイルでは何もしない
+  if (!isDesktopViewport()) return; // モバイルでは何もしない
   const sidebar = findSidebar();
-  if (!sidebar) return false;
+  if (!sidebar) return;
 
   reinitSidebarObserver();
 
@@ -222,7 +222,6 @@ function initSidebarDisplay() {
     applyWidthToSidebar(sidebar, currentSidebarWidth);
     mountSidebarHandle(sidebar);
   }
-  return true;
 }
 
 function applySidebarSettings(s) {
