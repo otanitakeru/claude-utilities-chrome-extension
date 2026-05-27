@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0 - 2026-05-26
+
+### Added
+
+- Sidebar width adjustment: drag the handle on the right edge of the sidebar to resize
+- Enable/disable sidebar adjustment from the extension popup
+
 ## v1.1.4 - 2026-05-25
 
 ### Added

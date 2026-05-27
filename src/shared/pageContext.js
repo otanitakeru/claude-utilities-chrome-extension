@@ -9,7 +9,7 @@ function isClaudeHost(url) {
   }
 }
 
-/** /new と /chat/* で拡張 UI を有効にする */
+/** /new と /chat/* （チャット画面）かどうか */
 function isAllowedClaudePage(url) {
   try {
     const { pathname } = new URL(url);
@@ -21,14 +21,20 @@ function isAllowedClaudePage(url) {
   }
 }
 
-/** @returns {"allowed"|"not-claude"|"claude-other"|"unknown"} */
+/** @returns {"chat"|"claude"|"not-claude"|"unknown"} */
 function getPageContext(url) {
   if (!url) return "unknown";
   if (!isClaudeHost(url)) return "not-claude";
-  if (!isAllowedClaudePage(url)) return "claude-other";
-  return "allowed";
+  if (isAllowedClaudePage(url)) return "chat";
+  return "claude";
 }
 
+/** チャット画面か（チャット幅・使用量表示の有効判定） */
 function isAllowedPage() {
   return isAllowedClaudePage(location.href);
+}
+
+/** claude.ai / claude.com のいずれかのページか（サイドバーの有効判定） */
+function isClaudePage() {
+  return isClaudeHost(location.href);
 }

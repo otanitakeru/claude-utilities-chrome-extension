@@ -543,7 +543,7 @@
     </div>
 
     <div id="mainPanel" class="main-panel">
-      <div class="section">
+      <div class="section" id="chatWidthSection">
         <div class="section-header">
           <span class="section-title" data-i18n="sectionChatWidth"
             >チャット幅</span
@@ -581,6 +581,17 @@
 
       <div class="section">
         <div class="section-header">
+          <span class="section-title" data-i18n="sectionSidebar">Sidebar</span>
+          <label class="toggle">
+            <input id="sidebarEnabled" type="checkbox" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section" id="usageSection">
+        <div class="section-header">
           <span class="section-title" data-i18n="sectionUsage">使用量</span>
           <label class="toggle">
             <input id="usageEnabled" type="checkbox" />
@@ -602,14 +613,15 @@
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-header">
-          <span class="section-title" data-i18n="sectionLanguage">言語</span>
-          <select id="langSelect" class="lang-select">
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-          </select>
-        </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title" data-i18n="sectionLanguage">言語</span>
+        <select id="langSelect" class="lang-select">
+          <option value="en">English</option>
+          <option value="ja">日本語</option>
+        </select>
       </div>
     </div>
 
