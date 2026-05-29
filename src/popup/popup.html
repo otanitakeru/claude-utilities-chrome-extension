@@ -193,21 +193,22 @@
       }
       .view-mode-btn {
         flex: 1;
-        padding: 5px 0;
-        height: 26px;
-        font-size: 11px;
+        padding: 8px 0;
+        height: 44px;
         font-family: inherit;
         background: #f0f0f0;
         border: 1px solid #e0e0e0;
         border-radius: 5px;
         cursor: pointer;
         color: #666;
-        white-space: nowrap;
         overflow: hidden;
         transition:
           background 0.15s,
           color 0.15s,
           border-color 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .view-mode-btn.active {
         background: #d97757;
@@ -217,6 +218,10 @@
       }
       .view-mode-btn:not(.active):hover {
         background: #e8e8e8;
+      }
+      .view-mode-btn svg {
+        display: block;
+        flex-shrink: 0;
       }
 
       .footer {
@@ -603,19 +608,36 @@
           <button
             class="view-mode-btn active"
             id="viewGraph"
-            data-i18n="viewGraph"
           >
-            グラフ
+            <svg width="46" height="26" viewBox="0 0 28 16" fill="none">
+              <!-- 左（セッション） -->
+              <circle cx="7" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" opacity="0.2"/>
+              <circle cx="7" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" stroke-dasharray="21 14" stroke-linecap="round" transform="rotate(-90 7 8)"/>
+              <!-- 右（週間） -->
+              <circle cx="21" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" opacity="0.2"/>
+              <circle cx="21" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" stroke-dasharray="5 30" stroke-linecap="round" transform="rotate(-90 21 8)"/>
+            </svg>
           </button>
-          <button class="view-mode-btn" id="viewBar" data-i18n="viewBar">
-            バー
+          <button class="view-mode-btn" id="viewBar">
+            <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3.5" width="12" height="2.5" rx="1.25" fill="currentColor" opacity="0.25"/>
+              <rect x="2" y="3.5" width="9" height="2.5" rx="1.25" fill="currentColor"/>
+              <rect x="2" y="8" width="12" height="2.5" rx="1.25" fill="currentColor" opacity="0.25"/>
+              <rect x="2" y="8" width="4" height="2.5" rx="1.25" fill="currentColor"/>
+            </svg>
           </button>
-          <button class="view-mode-btn" id="viewMini" data-i18n="viewMini">
-            最小化
+          <button class="view-mode-btn" id="viewMini">
+            <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+              <circle cx="3.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
+              <circle cx="3.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 12" stroke-linecap="round" transform="rotate(-90 3.5 8)"/>
+              <circle cx="8" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
+              <circle cx="8" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 16" stroke-linecap="round" transform="rotate(-90 8 8)"/>
+              <circle cx="12.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
+              <circle cx="12.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="10 8" stroke-linecap="round" transform="rotate(-90 12.5 8)"/>
+            </svg>
           </button>
         </div>
       </div>
-
     </div>
 
     <div class="section">

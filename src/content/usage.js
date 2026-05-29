@@ -304,7 +304,7 @@ function buildMiniDonutSVG(pct, color) {
   const filled = (circ * pctVal) / 100;
   const gap = circ - filled;
   const hasArc = pct !== null && pct > 0;
-  return `<svg viewBox="0 0 20 20" width="18" height="18" style="display:block;flex-shrink:0">
+  return `<svg viewBox="0 0 20 20" width="18" height="18">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(128,128,128,0.2)" stroke-width="3"/>
     ${hasArc ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="3"
       stroke-dasharray="${filled.toFixed(2)} ${gap.toFixed(2)}"
@@ -360,7 +360,6 @@ function findMiniInsertTarget() {
   for (const btn of composer.querySelectorAll("button")) {
     const text = btn.textContent ?? "";
     if (!/Sonnet|Opus|Haiku/i.test(text) || text.length >= 60) continue;
-    // relative flex gap-2 w-full items-center の直下の子要素まで辿る
     let el = btn;
     while (el.parentElement && el.parentElement !== document.body) {
       const cl = el.parentElement.classList;
@@ -379,7 +378,6 @@ function mountMiniUsage(data) {
     document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
     return;
   }
-  // findMiniInsertTarget は w-full flex gap-2 コンテナの直下の子を返す
   const target = findMiniInsertTarget();
   if (!target) return;
 
