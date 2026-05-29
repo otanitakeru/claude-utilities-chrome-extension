@@ -61,16 +61,6 @@ cd claude-utilities-chrome-extension
 
 </details>
 
-## スクリーンショット
-
-### Before
-
-<img src="assets/before.jpg" width="900">
-
-### After
-
-<img src="assets/after.jpg" width="900">
-
 ## ライセンス
 
 MIT

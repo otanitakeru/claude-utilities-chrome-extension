@@ -61,16 +61,6 @@ Steps 3–5 are the same as above. In step 6, select the **`src` folder** inside
 
 </details>
 
-## Screenshots
-
-### Before
-
-<img src="assets/before.jpg" width="900">
-
-### After
-
-<img src="assets/after.jpg" width="900">
-
 ## License
 
 MIT
