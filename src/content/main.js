@@ -96,11 +96,8 @@ domObserver = new MutationObserver(() => {
   const isGenerating = !!findStopButton();
   if (wasGenerating && !isGenerating) triggerRefresh("stop-button-gone", 1500);
   wasGenerating = isGenerating;
-  if (
-    isAllowedPage() &&
-    usageEnabled &&
-    !document.getElementById(USAGE_ROOT_ID)
-  )
+  const usageVisible = document.getElementById(USAGE_ROOT_ID) || document.getElementById(MINI_USAGE_ROOT_ID);
+  if (isAllowedPage() && usageEnabled && !usageVisible)
     setTimeout(loadAndRender, 500);
   // Retry sidebar observer if not yet attached (e.g. nav just appeared in DOM)
   if (sidebarEnabled && !sidebarObserver) initSidebarDisplay();

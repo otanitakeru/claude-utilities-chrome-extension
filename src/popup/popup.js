@@ -11,6 +11,7 @@ const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
 const viewBarBtn = document.getElementById("viewBar");
 const viewGraphBtn = document.getElementById("viewGraph");
+const viewMiniBtn = document.getElementById("viewMini");
 const langSelect = document.getElementById("langSelect");
 const pageNotice = document.getElementById("pageNotice");
 const pageNoticeText = document.getElementById("pageNoticeText");
@@ -119,6 +120,7 @@ function saveUsage() {
 function updateViewBtns(mode) {
   viewBarBtn.classList.toggle("active", mode === "bar");
   viewGraphBtn.classList.toggle("active", mode === "graph");
+  viewMiniBtn.classList.toggle("active", mode === "mini");
 }
 
 function saveViewMode(mode) {
@@ -180,4 +182,5 @@ sidebarEnabledInput.addEventListener("change", saveSidebar);
 usageEnabledInput.addEventListener("change", saveUsage);
 viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
 viewGraphBtn.addEventListener("click", () => saveViewMode("graph"));
+viewMiniBtn.addEventListener("click", () => saveViewMode("mini"));
 langSelect.addEventListener("change", () => saveLang(langSelect.value));

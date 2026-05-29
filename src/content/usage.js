@@ -161,6 +161,7 @@ function buildInnerHTML(data) {
 
 function removeUsage() {
   document.getElementById(USAGE_ROOT_ID)?.remove();
+  document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
 }
 
 function applyUsageRootBackground(root) {
@@ -191,6 +192,14 @@ function mountUsage(data) {
     removeUsage();
     return true;
   }
+
+  if (viewMode === "mini") {
+    document.getElementById(USAGE_ROOT_ID)?.remove();
+    mountMiniUsage(data);
+    return true;
+  }
+
+  document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
   const target = findInsertTarget();
   if (!target) return false;
   const existing = document.getElementById(USAGE_ROOT_ID);
@@ -286,6 +295,114 @@ function triggerRefresh(reason, delayMs = 0) {
       refreshTimer = null;
     });
   }, delayMs);
+}
+
+function buildMiniDonutSVG(pct, color) {
+  const r = 7, cx = 10, cy = 10;
+  const circ = 2 * Math.PI * r;
+  const pctVal = pct !== null ? Math.min(Math.max(pct, 0), 100) : 0;
+  const filled = (circ * pctVal) / 100;
+  const gap = circ - filled;
+  const hasArc = pct !== null && pct > 0;
+  return `<svg viewBox="0 0 20 20" width="18" height="18" style="display:block;flex-shrink:0">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(128,128,128,0.2)" stroke-width="3"/>
+    ${hasArc ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="3"
+      stroke-dasharray="${filled.toFixed(2)} ${gap.toFixed(2)}"
+      stroke-linecap="round"
+      transform="rotate(-90 ${cx} ${cy})"/>` : ""}
+  </svg>`;
+}
+
+function buildMiniUsageHTML(data) {
+  const sessionPct = data?.session ?? null;
+  const weeklyPct = data?.weekly ?? null;
+  const extra = data?.extraUsage;
+  const sc = getColor(sessionPct);
+  const wc = getColor(weeklyPct);
+
+  const items = [
+    { pct: sessionPct, color: sc, label: t("usageSession"), reset: formatResetsAtRelative(data?.sessionResetsAt) },
+    { pct: weeklyPct, color: wc, label: t("usageWeekly"), reset: formatResetsAtWeekday(data?.weeklyResetsAt) },
+  ];
+  if (extra) {
+    const ec = getColor(extra.utilization);
+    items.push({ pct: extra.utilization, color: ec, label: t("usageExtra"), reset: `${formatCredit(extra.used_credits)} / ${formatCredit(extra.monthly_limit)}` });
+  }
+
+  const donuts = items.map(({ pct, color }) =>
+    `<div class="cub-mini-item">${buildMiniDonutSVG(pct, color)}</div>`
+  ).join("");
+
+  const tipRows = items.map(({ pct, label, reset }) => {
+    const pctStr = pct === null ? "---" : Math.round(pct) + "%";
+    const info = reset ? `${pctStr}・${reset}` : pctStr;
+    const fillW = pct !== null ? Math.min(Math.max(pct, 0), 100) : 0;
+    return `<div class="cub-mini-tip-row">
+      <div class="cub-mini-tip-header">
+        <span class="cub-mini-tip-label">${label}</span>
+        <span class="cub-mini-tip-info">${info}</span>
+      </div>
+      <div class="cub-mini-tip-track">
+        <div class="cub-mini-tip-fill" style="width:${fillW}%"></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  return `<div class="cub-mini-container">
+    ${donuts}
+    <div class="cub-mini-tooltip" id="cub-mini-tooltip">${tipRows}</div>
+  </div>`;
+}
+
+function findMiniInsertTarget() {
+  const composer = document.querySelector('[data-testid="composer"]') || document.querySelector("fieldset");
+  if (!composer) return null;
+  for (const btn of composer.querySelectorAll("button")) {
+    const text = btn.textContent ?? "";
+    if (!/Sonnet|Opus|Haiku/i.test(text) || text.length >= 60) continue;
+    // relative flex gap-2 w-full items-center の直下の子要素まで辿る
+    let el = btn;
+    while (el.parentElement && el.parentElement !== document.body) {
+      const cl = el.parentElement.classList;
+      if (cl.contains("w-full") && cl.contains("flex") && cl.contains("gap-2")) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return btn;
+  }
+  return null;
+}
+
+function mountMiniUsage(data) {
+  if (!isAllowedPage() || !usageEnabled || !data) {
+    document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
+    return;
+  }
+  // findMiniInsertTarget は w-full flex gap-2 コンテナの直下の子を返す
+  const target = findMiniInsertTarget();
+  if (!target) return;
+
+  const existing = document.getElementById(MINI_USAGE_ROOT_ID);
+  if (existing) {
+    existing.innerHTML = buildMiniUsageHTML(data);
+  } else {
+    const root = document.createElement("div");
+    root.id = MINI_USAGE_ROOT_ID;
+    root.innerHTML = buildMiniUsageHTML(data);
+    target.parentElement?.insertBefore(root, target);
+  }
+  attachMiniTooltip();
+}
+
+function attachMiniTooltip() {
+  const miniContainer = document.querySelector(`#${MINI_USAGE_ROOT_ID} .cub-mini-container`);
+  if (!miniContainer) return;
+  const tooltip = miniContainer.querySelector(".cub-mini-tooltip");
+  if (!tooltip) return;
+
+  miniContainer.addEventListener("mouseenter", () => tooltip.classList.add("cub-mini-tooltip--visible"));
+  miniContainer.addEventListener("mouseleave", () => tooltip.classList.remove("cub-mini-tooltip--visible"));
 }
 
 const STOP_BTN_PATH_PREFIX = "M128,20A108,108";
