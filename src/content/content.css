@@ -181,6 +181,98 @@
   display: block;
 }
 
+/* ── ミニ使用量（入力エリア内） ──────────────────────────── */
+#claude-mini-usage-root {
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+}
+
+.cub-mini-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.cub-mini-item {
+  display: flex;
+  align-items: center;
+}
+
+.cub-mini-item svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.cub-mini-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  color: #1a1a1a;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  white-space: nowrap;
+  padding: 10px 14px;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 9999;
+  min-width: 220px;
+}
+
+.cub-mini-tooltip--visible {
+  display: block;
+}
+
+.cub-mini-tip-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.cub-mini-tip-row:last-child {
+  margin-bottom: 0;
+}
+
+.cub-mini-tip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cub-mini-tip-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+.cub-mini-tip-info {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.cub-mini-tip-track {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.cub-mini-tip-fill {
+  height: 100%;
+  background: #D97757;
+  border-radius: 99px;
+}
+
 .cug-reset {
   font-size: 10px;
   color: #aaa;
