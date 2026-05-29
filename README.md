@@ -29,7 +29,7 @@ Freely adjust the width of Claude's sidebar.
 
 Displays real-time usage above the chat input.
 
-- Shows 5-hour session, weekly, and extra quota as a progress bar or donut chart
+- Three display modes: **Graph** (donut charts above input), **Bar** (progress bars above input), **Mini** (three small donuts embedded in the toolbar, hover for details)
 - Turns red when less than 10% remains
 - Auto-refreshes after Claude finishes responding
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.3.0 - 2026-05-29
+
+### Added
+
+- Mini view mode: embeds three small donut charts directly in the composer toolbar (left of the model selector); hover to see a tooltip with all usage details and a progress bar for each quota
+- Three-way view mode toggle in the popup: Graph / Bar / Mini
+
+### Changed
+
+- Popup view mode buttons now show SVG icons only (no text labels)
+- Section titles in the popup now include SVG icons (Chat Width, Sidebar, Usage, Language)
+
 ## v1.2.0 - 2026-05-26
 
 ### Added
