@@ -5,7 +5,8 @@ Claude (Chrome 版) をより快適に使うための Chrome 拡張機能です�
 [English](README.md)
 
 <div align="center">
-  <img src="assets/top.jpg" width="100%">
+  <img src="assets/top.jpg" width="55%" style="vertical-align: middle">
+  <img src="assets/popup.jpg" width="28.75%" style="vertical-align: middle">
 </div>
 
 ## 機能

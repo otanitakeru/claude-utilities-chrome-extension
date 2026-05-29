@@ -5,7 +5,8 @@ A Chrome extension to enhance your experience on Claude (claude.ai).
 [日本語](README.ja.md)
 
 <div align="center">
-  <img src="assets/top.jpg" width="100%">
+  <img src="assets/top.jpg" width="55%" style="vertical-align: middle">
+  <img src="assets/popup.jpg" width="28.75%" style="vertical-align: middle">
 </div>
 
 ## Features
