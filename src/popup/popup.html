@@ -58,11 +58,18 @@
         justify-content: space-between;
       }
       .section-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         font-size: 11px;
         font-weight: 600;
         color: #999;
         letter-spacing: 0.05em;
         text-transform: uppercase;
+      }
+      .section-title svg {
+        flex-shrink: 0;
+        opacity: 0.8;
       }
 
       /* トグル */
@@ -550,9 +557,24 @@
     <div id="mainPanel" class="main-panel">
       <div class="section" id="chatWidthSection">
         <div class="section-header">
-          <span class="section-title" data-i18n="sectionChatWidth"
-            >チャット幅</span
-          >
+          <span class="section-title">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            >
+              <line x1="1" y1="3" x2="1" y2="11" />
+              <line x1="13" y1="3" x2="13" y2="11" />
+              <line x1="3.5" y1="7" x2="10.5" y2="7" />
+              <polyline points="5.5,5 3.5,7 5.5,9" />
+              <polyline points="8.5,5 10.5,7 8.5,9" />
+            </svg>
+            <span data-i18n="sectionChatWidth">チャット幅</span>
+          </span>
           <label class="toggle">
             <input id="wideEnabled" type="checkbox" />
             <div class="toggle-track"></div>
@@ -586,7 +608,22 @@
 
       <div class="section">
         <div class="section-header">
-          <span class="section-title" data-i18n="sectionSidebar">Sidebar</span>
+          <span class="section-title">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="1" y="2" width="12" height="10" rx="1.5" />
+              <line x1="4.5" y1="2" x2="4.5" y2="12" />
+            </svg>
+            <span data-i18n="sectionSidebar">Sidebar</span>
+          </span>
           <label class="toggle">
             <input id="sidebarEnabled" type="checkbox" />
             <div class="toggle-track"></div>
@@ -597,7 +634,47 @@
 
       <div class="section" id="usageSection">
         <div class="section-header">
-          <span class="section-title" data-i18n="sectionUsage">使用量</span>
+          <span class="section-title">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect
+                x="1"
+                y="8"
+                width="3"
+                height="4"
+                rx="0.8"
+                fill="currentColor"
+                stroke="none"
+              />
+              <rect
+                x="5.5"
+                y="5"
+                width="3"
+                height="7"
+                rx="0.8"
+                fill="currentColor"
+                stroke="none"
+              />
+              <rect
+                x="10"
+                y="2"
+                width="3"
+                height="10"
+                rx="0.8"
+                fill="currentColor"
+                stroke="none"
+              />
+            </svg>
+            <span data-i18n="sectionUsage">使用量</span>
+          </span>
           <label class="toggle">
             <input id="usageEnabled" type="checkbox" />
             <div class="toggle-track"></div>
@@ -605,35 +682,142 @@
           </label>
         </div>
         <div class="view-mode-btns" id="viewModeControl" style="display: none">
-          <button
-            class="view-mode-btn active"
-            id="viewGraph"
-          >
+          <button class="view-mode-btn active" id="viewGraph">
             <svg width="46" height="26" viewBox="0 0 28 16" fill="none">
               <!-- 左（セッション） -->
-              <circle cx="7" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" opacity="0.2"/>
-              <circle cx="7" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" stroke-dasharray="21 14" stroke-linecap="round" transform="rotate(-90 7 8)"/>
+              <circle
+                cx="7"
+                cy="8"
+                r="5.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                opacity="0.2"
+              />
+              <circle
+                cx="7"
+                cy="8"
+                r="5.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-dasharray="21 14"
+                stroke-linecap="round"
+                transform="rotate(-90 7 8)"
+              />
               <!-- 右（週間） -->
-              <circle cx="21" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" opacity="0.2"/>
-              <circle cx="21" cy="8" r="5.5" stroke="currentColor" stroke-width="1.8" stroke-dasharray="5 30" stroke-linecap="round" transform="rotate(-90 21 8)"/>
+              <circle
+                cx="21"
+                cy="8"
+                r="5.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                opacity="0.2"
+              />
+              <circle
+                cx="21"
+                cy="8"
+                r="5.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-dasharray="5 30"
+                stroke-linecap="round"
+                transform="rotate(-90 21 8)"
+              />
             </svg>
           </button>
           <button class="view-mode-btn" id="viewBar">
             <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
-              <rect x="2" y="3.5" width="12" height="2.5" rx="1.25" fill="currentColor" opacity="0.25"/>
-              <rect x="2" y="3.5" width="9" height="2.5" rx="1.25" fill="currentColor"/>
-              <rect x="2" y="8" width="12" height="2.5" rx="1.25" fill="currentColor" opacity="0.25"/>
-              <rect x="2" y="8" width="4" height="2.5" rx="1.25" fill="currentColor"/>
+              <rect
+                x="2"
+                y="3.5"
+                width="12"
+                height="2.5"
+                rx="1.25"
+                fill="currentColor"
+                opacity="0.25"
+              />
+              <rect
+                x="2"
+                y="3.5"
+                width="9"
+                height="2.5"
+                rx="1.25"
+                fill="currentColor"
+              />
+              <rect
+                x="2"
+                y="8"
+                width="12"
+                height="2.5"
+                rx="1.25"
+                fill="currentColor"
+                opacity="0.25"
+              />
+              <rect
+                x="2"
+                y="8"
+                width="4"
+                height="2.5"
+                rx="1.25"
+                fill="currentColor"
+              />
             </svg>
           </button>
           <button class="view-mode-btn" id="viewMini">
             <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
-              <circle cx="3.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
-              <circle cx="3.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 12" stroke-linecap="round" transform="rotate(-90 3.5 8)"/>
-              <circle cx="8" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
-              <circle cx="8" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 16" stroke-linecap="round" transform="rotate(-90 8 8)"/>
-              <circle cx="12.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" opacity="0.3"/>
-              <circle cx="12.5" cy="8" r="2.8" stroke="currentColor" stroke-width="1.6" stroke-dasharray="10 8" stroke-linecap="round" transform="rotate(-90 12.5 8)"/>
+              <circle
+                cx="3.5"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                opacity="0.3"
+              />
+              <circle
+                cx="3.5"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-dasharray="6 12"
+                stroke-linecap="round"
+                transform="rotate(-90 3.5 8)"
+              />
+              <circle
+                cx="8"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                opacity="0.3"
+              />
+              <circle
+                cx="8"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-dasharray="2 16"
+                stroke-linecap="round"
+                transform="rotate(-90 8 8)"
+              />
+              <circle
+                cx="12.5"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                opacity="0.3"
+              />
+              <circle
+                cx="12.5"
+                cy="8"
+                r="2.8"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-dasharray="10 8"
+                stroke-linecap="round"
+                transform="rotate(-90 12.5 8)"
+              />
             </svg>
           </button>
         </div>
@@ -642,7 +826,23 @@
 
     <div class="section">
       <div class="section-header">
-        <span class="section-title" data-i18n="sectionLanguage">言語</span>
+        <span class="section-title">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+          >
+            <circle cx="7" cy="7" r="5.5" />
+            <path d="M7 1.5 C5 4 5 10 7 12.5 C9 10 9 4 7 1.5" />
+            <line x1="1.8" y1="5" x2="12.2" y2="5" />
+            <line x1="1.8" y1="9" x2="12.2" y2="9" />
+          </svg>
+          <span data-i18n="sectionLanguage">言語</span>
+        </span>
         <select id="langSelect" class="lang-select">
           <option value="en">English</option>
           <option value="ja">日本語</option>
