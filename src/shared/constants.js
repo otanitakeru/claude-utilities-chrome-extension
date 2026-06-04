@@ -3,6 +3,7 @@
 const STYLE_ID = "claude-wide-chat-style";
 const USAGE_ROOT_ID = "claude-usage-root";
 const MINI_USAGE_ROOT_ID = "claude-mini-usage-root";
+const STATUS_ROOT_ID = "claude-status-root";
 
 const WIDE_DEFAULTS = { wideEnabled: true, width: 1000, padding: 8 };
 const WIDE_MIN_WIDTH = 650;
@@ -13,7 +14,7 @@ const USAGE_DEFAULTS = { usageEnabled: true };
 const VIEW_DEFAULTS = { viewMode: "graph" };
 const LANG_DEFAULTS = { lang: "en" };
 
-const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 18 };
+const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 12 };
 const SIDEBAR_MIN_WIDTH = 8.75;
 const SIDEBAR_MAX_WIDTH = 30;
 const SIDEBAR_WIDTH_STEP = 0.25;

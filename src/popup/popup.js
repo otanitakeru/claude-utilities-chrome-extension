@@ -1,5 +1,60 @@
 // 定数・ユーティリティは shared/constants.js と shared/i18n.js から読み込み済み
 
+// ── ステータス表示 ──────────────────────────────────────
+function getStatusColor(status) {
+  const colors = {
+    operational: "#22c55e",
+    degraded_performance: "#f59e0b",
+    partial_outage: "#f97316",
+    major_outage: "#ef4444",
+  };
+  return colors[status] ?? "#9ca3af";
+}
+
+function getStatusLabel(status) {
+  const labels = {
+    operational: "Operational",
+    degraded_performance: "Degraded Performance",
+    partial_outage: "Partial Outage",
+    major_outage: "Major Outage",
+  };
+  return labels[status] ?? "—";
+}
+
+function renderStatus() {
+  chrome.storage.local.get(
+    ["claudeStatus", "claudeHasIncident", "claudeLatestIncident"],
+    (result) => {
+      const status = result.claudeStatus ?? "unknown";
+      const hasIncident = result.claudeHasIncident ?? false;
+      const incident = result.claudeLatestIncident ?? null;
+
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
+      const incidentEl = document.getElementById("statusIncident");
+      const incidentLink = document.getElementById("statusIncidentLink");
+
+      if (dot) {
+        dot.style.background = getStatusColor(status);
+        dot.classList.toggle(
+          "status-dot--issue",
+          status !== "operational" && status !== "unknown",
+        );
+      }
+      if (text) text.textContent = getStatusLabel(status);
+      if (incidentEl && incidentLink) {
+        if (hasIncident && incident) {
+          incidentEl.hidden = false;
+          incidentLink.textContent = incident.name;
+          incidentLink.href = incident.shortlink ?? "#";
+        } else {
+          incidentEl.hidden = true;
+        }
+      }
+    },
+  );
+}
+
 const wideEnabledInput = document.getElementById("wideEnabled");
 const widthRange = document.getElementById("widthRange");
 const widthNumber = document.getElementById("widthNumber");
@@ -139,7 +194,13 @@ function saveLang(lang) {
 
 // 初期値読み込み
 chrome.storage.local.get(
-  { ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS, ...USAGE_DEFAULTS, ...VIEW_DEFAULTS, ...LANG_DEFAULTS },
+  {
+    ...WIDE_DEFAULTS,
+    ...SIDEBAR_DEFAULTS,
+    ...USAGE_DEFAULTS,
+    ...VIEW_DEFAULTS,
+    ...LANG_DEFAULTS,
+  },
   (s) => {
     wideEnabledInput.checked = s.wideEnabled;
     setWidth(s.width);
@@ -152,6 +213,7 @@ chrome.storage.local.get(
     langSelect.value = currentLang;
     applyI18n();
     refreshPageNotice();
+    renderStatus();
   },
 );
 
