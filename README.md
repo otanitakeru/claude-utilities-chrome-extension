@@ -34,6 +34,13 @@ Displays real-time usage above the chat input.
 - Turns red when less than 10% remains
 - Auto-refreshes after Claude finishes responding
 
+### Claude Status
+
+Monitors the health of claude.ai in real time.
+
+- Green = operational, yellow = degraded performance, orange = partial outage, red = major outage
+- The popup always shows status with a colored dot; active incident name is displayed as a link
+
 ### Language
 
 Switch between Japanese and English from the extension popup.

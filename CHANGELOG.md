@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.0 - 2026-06-04
+
+### Added
+
+- Claude Status monitoring: fetches `claude.ai` status from the Anthropic status API.
+- Status section added to the popup: always visible, shows current status with a colored indicator; active incident name displayed as a link
+
 ## v1.3.0 - 2026-05-29
 
 ### Added
