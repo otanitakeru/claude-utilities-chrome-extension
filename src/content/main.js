@@ -63,7 +63,13 @@ function reapplyLayoutSettings(label) {
 // ── 初期化 ───────────────────────────────────────────────
 safeChromeCall(() => {
   chrome.storage.local.get(
-    { ...LANG_DEFAULTS, ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS, ...USAGE_DEFAULTS, viewMode: "graph" },
+    {
+      ...LANG_DEFAULTS,
+      ...WIDE_DEFAULTS,
+      ...SIDEBAR_DEFAULTS,
+      ...USAGE_DEFAULTS,
+      viewMode: "graph",
+    },
     (s) => {
       currentLang = s.lang ?? "en";
       applyWideSettings(s);
@@ -75,6 +81,7 @@ safeChromeCall(() => {
         return;
       }
       loadAndRender();
+      loadAndRenderStatus();
       triggerRefresh("page-load", 250);
     },
   );
@@ -91,14 +98,21 @@ domObserver = new MutationObserver(() => {
       return;
     }
     reapplyLayoutSettings("layout.spa");
-    setTimeout(loadAndRender, 800);
+    setTimeout(() => {
+      loadAndRender();
+      loadAndRenderStatus();
+    }, 800);
   }
   const isGenerating = !!findStopButton();
   if (wasGenerating && !isGenerating) triggerRefresh("stop-button-gone", 1500);
   wasGenerating = isGenerating;
-  const usageVisible = document.getElementById(USAGE_ROOT_ID) || document.getElementById(MINI_USAGE_ROOT_ID);
+  const usageVisible =
+    document.getElementById(USAGE_ROOT_ID) ||
+    document.getElementById(MINI_USAGE_ROOT_ID);
   if (isAllowedPage() && usageEnabled && !usageVisible)
     setTimeout(loadAndRender, 500);
+  if (isAllowedPage() && !document.getElementById(STATUS_ROOT_ID))
+    setTimeout(loadAndRenderStatus, 500);
   // Retry sidebar observer if not yet attached (e.g. nav just appeared in DOM)
   if (sidebarEnabled && !sidebarObserver) initSidebarDisplay();
 });
@@ -113,6 +127,7 @@ document.addEventListener("visibilitychange", () => {
     if (isAllowedPage()) {
       reapplyLayoutSettings("layout.visibility");
       loadAndRender();
+      loadAndRenderStatus();
     } else {
       teardownContentUI();
     }
@@ -126,6 +141,8 @@ safeChromeCall(() => {
     if (changes.viewMode) viewMode = changes.viewMode.newValue ?? "graph";
     if (changes.usageEnabled)
       usageEnabled = changes.usageEnabled.newValue ?? true;
+    if (changes.claudeStatus)
+      mountStatusLamp(changes.claudeStatus.newValue ?? "unknown");
     safeChromeCall(() => {
       chrome.storage.local.get(["usageData", "lastUpdated"], (result) => {
         if (contextInvalidated || !result) return;
@@ -163,5 +180,8 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
   if (msg?.type === "CLAUDE_SIDEBAR_APPLY") {
     applySidebarSettings(msg);
+  }
+  if (msg?.type === "CLAUDE_STATUS_UPDATE") {
+    mountStatusLamp(msg.claudeStatus ?? "unknown");
   }
 });
