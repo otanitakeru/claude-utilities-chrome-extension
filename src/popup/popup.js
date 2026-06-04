@@ -246,3 +246,13 @@ viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
 viewGraphBtn.addEventListener("click", () => saveViewMode("graph"));
 viewMiniBtn.addEventListener("click", () => saveViewMode("mini"));
 langSelect.addEventListener("change", () => saveLang(langSelect.value));
+
+document.getElementById("statusRefreshBtn")?.addEventListener("click", () => {
+  const btn = document.getElementById("statusRefreshBtn");
+  if (btn) btn.disabled = true;
+  chrome.runtime.sendMessage({ type: "REFRESH_STATUS" }, () => {
+    void chrome.runtime.lastError;
+    renderStatus();
+    if (btn) btn.disabled = false;
+  });
+});

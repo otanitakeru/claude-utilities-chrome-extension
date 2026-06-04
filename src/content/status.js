@@ -33,9 +33,6 @@ function mountStatusLamp(claudeStatus) {
     return;
   }
 
-  const target = findMiniInsertTarget();
-  if (!target) return;
-
   const existing = document.getElementById(STATUS_ROOT_ID);
   if (existing) {
     existing.innerHTML = buildStatusLampHTML(claudeStatus);
@@ -45,6 +42,15 @@ function mountStatusLamp(claudeStatus) {
   const root = document.createElement("div");
   root.id = STATUS_ROOT_ID;
   root.innerHTML = buildStatusLampHTML(claudeStatus);
+
+  const miniUsage = document.getElementById(MINI_USAGE_ROOT_ID);
+  if (miniUsage) {
+    miniUsage.insertAdjacentElement("afterend", root);
+    return;
+  }
+
+  const target = findMiniInsertTarget();
+  if (!target) return;
   target.parentElement?.insertBefore(root, target);
 }
 

@@ -298,7 +298,9 @@ function triggerRefresh(reason, delayMs = 0) {
 }
 
 function buildMiniDonutSVG(pct, color) {
-  const r = 7, cx = 10, cy = 10;
+  const r = 7,
+    cx = 10,
+    cy = 10;
   const circ = 2 * Math.PI * r;
   const pctVal = pct !== null ? Math.min(Math.max(pct, 0), 100) : 0;
   const filled = (circ * pctVal) / 100;
@@ -306,10 +308,14 @@ function buildMiniDonutSVG(pct, color) {
   const hasArc = pct !== null && pct > 0;
   return `<svg viewBox="0 0 20 20" width="18" height="18">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(128,128,128,0.2)" stroke-width="3"/>
-    ${hasArc ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="3"
+    ${
+      hasArc
+        ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="3"
       stroke-dasharray="${filled.toFixed(2)} ${gap.toFixed(2)}"
       stroke-linecap="round"
-      transform="rotate(-90 ${cx} ${cy})"/>` : ""}
+      transform="rotate(-90 ${cx} ${cy})"/>`
+        : ""
+    }
   </svg>`;
 }
 
@@ -321,23 +327,42 @@ function buildMiniUsageHTML(data) {
   const wc = getColor(weeklyPct);
 
   const items = [
-    { pct: sessionPct, color: sc, label: t("usageSession"), reset: formatResetsAtRelative(data?.sessionResetsAt) },
-    { pct: weeklyPct, color: wc, label: t("usageWeekly"), reset: formatResetsAtWeekday(data?.weeklyResetsAt) },
+    {
+      pct: sessionPct,
+      color: sc,
+      label: t("usageSession"),
+      reset: formatResetsAtRelative(data?.sessionResetsAt),
+    },
+    {
+      pct: weeklyPct,
+      color: wc,
+      label: t("usageWeekly"),
+      reset: formatResetsAtWeekday(data?.weeklyResetsAt),
+    },
   ];
   if (extra) {
     const ec = getColor(extra.utilization);
-    items.push({ pct: extra.utilization, color: ec, label: t("usageExtra"), reset: `${formatCredit(extra.used_credits)} / ${formatCredit(extra.monthly_limit)}` });
+    items.push({
+      pct: extra.utilization,
+      color: ec,
+      label: t("usageExtra"),
+      reset: `${formatCredit(extra.used_credits)} / ${formatCredit(extra.monthly_limit)}`,
+    });
   }
 
-  const donuts = items.map(({ pct, color }) =>
-    `<div class="cub-mini-item">${buildMiniDonutSVG(pct, color)}</div>`
-  ).join("");
+  const donuts = items
+    .map(
+      ({ pct, color }) =>
+        `<div class="cub-mini-item">${buildMiniDonutSVG(pct, color)}</div>`,
+    )
+    .join("");
 
-  const tipRows = items.map(({ pct, label, reset }) => {
-    const pctStr = pct === null ? "---" : Math.round(pct) + "%";
-    const info = reset ? `${pctStr}・${reset}` : pctStr;
-    const fillW = pct !== null ? Math.min(Math.max(pct, 0), 100) : 0;
-    return `<div class="cub-mini-tip-row">
+  const tipRows = items
+    .map(({ pct, label, reset }) => {
+      const pctStr = pct === null ? "---" : Math.round(pct) + "%";
+      const info = reset ? `${pctStr}・${reset}` : pctStr;
+      const fillW = pct !== null ? Math.min(Math.max(pct, 0), 100) : 0;
+      return `<div class="cub-mini-tip-row">
       <div class="cub-mini-tip-header">
         <span class="cub-mini-tip-label">${label}</span>
         <span class="cub-mini-tip-info">${info}</span>
@@ -346,7 +371,8 @@ function buildMiniUsageHTML(data) {
         <div class="cub-mini-tip-fill" style="width:${fillW}%"></div>
       </div>
     </div>`;
-  }).join("");
+    })
+    .join("");
 
   return `<div class="cub-mini-container">
     ${donuts}
@@ -355,7 +381,9 @@ function buildMiniUsageHTML(data) {
 }
 
 function findMiniInsertTarget() {
-  const composer = document.querySelector('[data-testid="composer"]') || document.querySelector("fieldset");
+  const composer =
+    document.querySelector('[data-testid="composer"]') ||
+    document.querySelector("fieldset");
   if (!composer) return null;
   for (const btn of composer.querySelectorAll("button")) {
     const text = btn.textContent ?? "";
@@ -363,7 +391,11 @@ function findMiniInsertTarget() {
     let el = btn;
     while (el.parentElement && el.parentElement !== document.body) {
       const cl = el.parentElement.classList;
-      if (cl.contains("w-full") && cl.contains("flex") && cl.contains("gap-2")) {
+      if (
+        cl.contains("w-full") &&
+        cl.contains("flex") &&
+        cl.contains("gap-2")
+      ) {
         return el;
       }
       el = el.parentElement;
@@ -391,16 +423,28 @@ function mountMiniUsage(data) {
     target.parentElement?.insertBefore(root, target);
   }
   attachMiniTooltip();
+
+  const lamp = document.getElementById(STATUS_ROOT_ID);
+  if (lamp) {
+    const miniUsageEl = document.getElementById(MINI_USAGE_ROOT_ID);
+    if (miniUsageEl) miniUsageEl.insertAdjacentElement("afterend", lamp);
+  }
 }
 
 function attachMiniTooltip() {
-  const miniContainer = document.querySelector(`#${MINI_USAGE_ROOT_ID} .cub-mini-container`);
+  const miniContainer = document.querySelector(
+    `#${MINI_USAGE_ROOT_ID} .cub-mini-container`,
+  );
   if (!miniContainer) return;
   const tooltip = miniContainer.querySelector(".cub-mini-tooltip");
   if (!tooltip) return;
 
-  miniContainer.addEventListener("mouseenter", () => tooltip.classList.add("cub-mini-tooltip--visible"));
-  miniContainer.addEventListener("mouseleave", () => tooltip.classList.remove("cub-mini-tooltip--visible"));
+  miniContainer.addEventListener("mouseenter", () =>
+    tooltip.classList.add("cub-mini-tooltip--visible"),
+  );
+  miniContainer.addEventListener("mouseleave", () =>
+    tooltip.classList.remove("cub-mini-tooltip--visible"),
+  );
 }
 
 const STOP_BTN_PATH_PREFIX = "M128,20A108,108";

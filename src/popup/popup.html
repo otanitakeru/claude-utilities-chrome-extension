@@ -300,6 +300,42 @@
       .status-incident-link:hover {
         text-decoration: underline;
       }
+      .status-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 6px;
+      }
+      .status-page-link {
+        font-size: 10px;
+        color: #aaa;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        transition: color 0.15s;
+      }
+      .status-page-link:hover {
+        color: #d97757;
+      }
+      .status-refresh-btn {
+        font-size: 10px;
+        color: #aaa;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 2px 6px 0;
+        height: 14px;
+        border-radius: 4px;
+        font-family: inherit;
+      }
+      .status-refresh-btn:hover {
+        color: #d97757;
+      }
+      .status-refresh-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
 
       .lang-select {
         font-size: 12px;
@@ -629,6 +665,36 @@
           target="_blank"
           class="status-incident-link"
         ></a>
+      </div>
+      <div class="status-actions">
+        <a
+          href="https://status.claude.com"
+          target="_blank"
+          class="status-page-link"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 2H2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V6" />
+            <path d="M6 1h3v3" />
+            <line x1="9" y1="1" x2="5" y2="5" />
+          </svg>
+          status.claude.com
+        </a>
+        <button
+          class="status-refresh-btn"
+          id="statusRefreshBtn"
+          data-i18n="refreshBtn"
+        >
+          ↻ Refresh
+        </button>
       </div>
     </div>
 
