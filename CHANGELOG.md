@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.0 - 2026-07-15
+
+### Added
+
+- Model-scoped weekly usage: when a model has its own weekly limit (e.g. Fable 5's weekly quota), it's now shown alongside the session/weekly/extra bars in all three display modes (Graph, Bar, Mini)
+
 ## v1.4.1 - 2026-07-15
 
 ### Fixed
