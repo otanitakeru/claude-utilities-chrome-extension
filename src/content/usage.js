@@ -387,7 +387,7 @@ function findMiniInsertTarget() {
   if (!composer) return null;
   for (const btn of composer.querySelectorAll("button")) {
     const text = btn.textContent ?? "";
-    if (!/Sonnet|Opus|Haiku/i.test(text) || text.length >= 60) continue;
+    if (!/Sonnet|Opus|Haiku|Fable|Mythos/i.test(text) || text.length >= 60) continue;
     let el = btn;
     while (el.parentElement && el.parentElement !== document.body) {
       const cl = el.parentElement.classList;
