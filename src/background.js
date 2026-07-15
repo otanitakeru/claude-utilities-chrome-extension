@@ -83,11 +83,21 @@ async function fetchUsage() {
     }
     const usage = await usageRes.json();
 
+    // モデル別の週間上限（例: Fable）。limits 配列の weekly_scoped から抽出する
+    const modelWeekly = (usage.limits ?? [])
+      .filter((l) => l.kind === "weekly_scoped" && l.scope?.model?.display_name)
+      .map((l) => ({
+        modelName: l.scope.model.display_name,
+        utilization: l.percent ?? null,
+        resetsAt: l.resets_at ?? null,
+      }));
+
     const parsed = {
       session: usage.five_hour?.utilization ?? null,
       weekly: usage.seven_day?.utilization ?? null,
       sessionResetsAt: usage.five_hour?.resets_at ?? null,
       weeklyResetsAt: usage.seven_day?.resets_at ?? null,
+      modelWeekly,
       extraUsage: usage.extra_usage ?? null,
     };
 
