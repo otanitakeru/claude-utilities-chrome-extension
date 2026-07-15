@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.1 - 2026-07-15
+
+### Fixed
+
+- Mini usage display did not appear when the Fable 5 model was selected
+
 ## v1.4.0 - 2026-06-04
 
 ### Added
