@@ -31,6 +31,7 @@ Freely adjust the width of Claude's sidebar.
 Displays real-time usage above the chat input.
 
 - Three display modes: **Graph** (donut charts above input), **Bar** (progress bars above input), **Mini** (three small donuts embedded in the toolbar, hover for details)
+- Shows a model-scoped weekly limit (e.g. Fable 5's weekly quota) alongside the session/weekly/extra usage when one applies
 - Turns red when less than 10% remains
 - Auto-refreshes after Claude finishes responding
 

@@ -42,6 +42,19 @@ function buildBarHTML(data) {
   const sc = getColor(sessionPct),
     wc = getColor(weeklyPct);
 
+  const modelWeeklyHTML = (data?.modelWeekly ?? [])
+    .map((mw) => {
+      const mc = getColor(mw.utilization);
+      const reset = formatResetsAtWeekday(mw.resetsAt);
+      return `<div class="cub-row">
+      <span class="cub-label">${t("usageModelWeekly", mw.modelName)}</span>
+      <div class="cub-track"><div class="cub-fill" style="width:${Math.min(mw.utilization ?? 0, 100)}%;background:${mc}"></div></div>
+      <span class="cub-pct" style="color:${mc}">${formatPct(mw.utilization)}</span>
+      ${reset ? `<span class="cub-sub">${reset}</span>` : ""}
+    </div>`;
+    })
+    .join("");
+
   const extraHTML = extra
     ? (() => {
         const ec = getColor(extra.utilization);
@@ -67,6 +80,7 @@ function buildBarHTML(data) {
       <span class="cub-pct" style="color:${wc}">${formatPct(weeklyPct)}</span>
       ${weeklyReset ? `<span class="cub-sub">${weeklyReset}</span>` : ""}
     </div>
+    ${modelWeeklyHTML}
     ${extraHTML}
     <div class="cub-actions">
       <span class="cub-updated" id="cub-updated-time"></span>
@@ -121,6 +135,14 @@ function buildGraphHTML(data) {
       color: wc,
     },
   ];
+
+  for (const mw of data?.modelWeekly ?? []) {
+    items.push({
+      pct: mw.utilization,
+      reset: formatResetsAtWeekday(mw.resetsAt),
+      color: getColor(mw.utilization),
+    });
+  }
 
   if (extra) {
     const ec = getColor(extra.utilization);
@@ -340,6 +362,14 @@ function buildMiniUsageHTML(data) {
       reset: formatResetsAtWeekday(data?.weeklyResetsAt),
     },
   ];
+  for (const mw of data?.modelWeekly ?? []) {
+    items.push({
+      pct: mw.utilization,
+      color: getColor(mw.utilization),
+      label: t("usageModelWeekly", mw.modelName),
+      reset: formatResetsAtWeekday(mw.resetsAt),
+    });
+  }
   if (extra) {
     const ec = getColor(extra.utilization);
     items.push({
