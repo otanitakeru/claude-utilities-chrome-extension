@@ -186,6 +186,8 @@
   display: inline-flex;
   align-items: center;
   cursor: default;
+  /* 挿入先が block の場合にベースライン揃えで浮き上がるのを防ぐ */
+  vertical-align: middle;
 }
 
 .cub-mini-container {
@@ -290,6 +292,7 @@
   align-items: center;
   flex-shrink: 0;
   padding: 0 4px;
+  vertical-align: middle;
 }
 
 .cus-lamp {
