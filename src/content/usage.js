@@ -184,6 +184,7 @@ function buildInnerHTML(data) {
 function removeUsage() {
   document.getElementById(USAGE_ROOT_ID)?.remove();
   document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
+  removeMiniTooltip();
 }
 
 function applyUsageRootBackground(root) {
@@ -341,7 +342,7 @@ function buildMiniDonutSVG(pct, color) {
   </svg>`;
 }
 
-function buildMiniUsageHTML(data) {
+function buildMiniItems(data) {
   const sessionPct = data?.session ?? null;
   const weeklyPct = data?.weekly ?? null;
   const extra = data?.extraUsage;
@@ -379,15 +380,22 @@ function buildMiniUsageHTML(data) {
       reset: `${formatCredit(extra.used_credits)} / ${formatCredit(extra.monthly_limit)}`,
     });
   }
+  return items;
+}
 
-  const donuts = items
+function buildMiniUsageHTML(data) {
+  const donuts = buildMiniItems(data)
     .map(
       ({ pct, color }) =>
         `<div class="cub-mini-item">${buildMiniDonutSVG(pct, color)}</div>`,
     )
     .join("");
 
-  const tipRows = items
+  return `<div class="cub-mini-container">${donuts}</div>`;
+}
+
+function buildMiniTooltipHTML(data) {
+  return buildMiniItems(data)
     .map(({ pct, label, reset }) => {
       const pctStr = pct === null ? "---" : Math.round(pct) + "%";
       const info = reset ? `${pctStr}・${reset}` : pctStr;
@@ -403,11 +411,6 @@ function buildMiniUsageHTML(data) {
     </div>`;
     })
     .join("");
-
-  return `<div class="cub-mini-container">
-    ${donuts}
-    <div class="cub-mini-tooltip" id="cub-mini-tooltip">${tipRows}</div>
-  </div>`;
 }
 
 function findMiniInsertTarget() {
@@ -438,6 +441,7 @@ function findMiniInsertTarget() {
 function mountMiniUsage(data) {
   if (!isAllowedPage() || !usageEnabled || !data) {
     document.getElementById(MINI_USAGE_ROOT_ID)?.remove();
+    removeMiniTooltip();
     return;
   }
   const target = findMiniInsertTarget();
@@ -445,6 +449,8 @@ function mountMiniUsage(data) {
 
   const existing = document.getElementById(MINI_USAGE_ROOT_ID);
   if (existing) {
+    // 再描画で hover 中の要素が差し替わるため、いったん隠す
+    hideMiniTooltip();
     existing.innerHTML = buildMiniUsageHTML(data);
   } else {
     const root = document.createElement("div");
@@ -452,7 +458,7 @@ function mountMiniUsage(data) {
     root.innerHTML = buildMiniUsageHTML(data);
     target.parentElement?.insertBefore(root, target);
   }
-  attachMiniTooltip();
+  attachMiniTooltip(data);
 
   const lamp = document.getElementById(STATUS_ROOT_ID);
   if (lamp) {
@@ -461,20 +467,93 @@ function mountMiniUsage(data) {
   }
 }
 
-function attachMiniTooltip() {
-  const miniContainer = document.querySelector(
-    `#${MINI_USAGE_ROOT_ID} .cub-mini-container`,
-  );
-  if (!miniContainer) return;
-  const tooltip = miniContainer.querySelector(".cub-mini-tooltip");
-  if (!tooltip) return;
+/**
+ * ツールチップは body 直下の fixed 要素として描画する。
+ * 入力欄側の祖先に overflow:hidden が付くと absolute 配置では切れてしまうため。
+ */
+function ensureMiniTooltip(data) {
+  let tooltip = document.getElementById(MINI_TOOLTIP_ID);
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.id = MINI_TOOLTIP_ID;
+    tooltip.className = "cub-mini-tooltip";
+    document.body.appendChild(tooltip);
+  }
+  tooltip.innerHTML = buildMiniTooltipHTML(data);
+  return tooltip;
+}
 
-  miniContainer.addEventListener("mouseenter", () =>
-    tooltip.classList.add("cub-mini-tooltip--visible"),
+function removeMiniTooltip() {
+  hideMiniTooltip();
+  document.getElementById(MINI_TOOLTIP_ID)?.remove();
+}
+
+function getMiniContainer() {
+  return document.querySelector(`#${MINI_USAGE_ROOT_ID} .cub-mini-container`);
+}
+
+const MINI_TOOLTIP_GAP = 8;
+const MINI_TOOLTIP_MARGIN = 8;
+
+function positionMiniTooltip() {
+  const tooltip = document.getElementById(MINI_TOOLTIP_ID);
+  const container = getMiniContainer();
+  if (!tooltip || !container) return;
+
+  const anchor = container.getBoundingClientRect();
+  const width = tooltip.offsetWidth;
+  const height = tooltip.offsetHeight;
+
+  let top = anchor.top - height - MINI_TOOLTIP_GAP;
+  if (top < MINI_TOOLTIP_MARGIN) {
+    top = Math.min(
+      anchor.bottom + MINI_TOOLTIP_GAP,
+      window.innerHeight - height - MINI_TOOLTIP_MARGIN,
+    );
+  }
+
+  const maxLeft = window.innerWidth - width - MINI_TOOLTIP_MARGIN;
+  const left = Math.max(
+    MINI_TOOLTIP_MARGIN,
+    Math.min(anchor.left + anchor.width / 2 - width / 2, maxLeft),
   );
-  miniContainer.addEventListener("mouseleave", () =>
-    tooltip.classList.remove("cub-mini-tooltip--visible"),
-  );
+
+  tooltip.style.top = `${Math.round(top)}px`;
+  tooltip.style.left = `${Math.round(left)}px`;
+}
+
+function showMiniTooltip() {
+  const tooltip = document.getElementById(MINI_TOOLTIP_ID);
+  if (!tooltip) return;
+  tooltip.classList.add("cub-mini-tooltip--visible");
+  positionMiniTooltip();
+  window.addEventListener("scroll", positionMiniTooltip, true);
+  window.addEventListener("resize", positionMiniTooltip);
+}
+
+function hideMiniTooltip() {
+  document
+    .getElementById(MINI_TOOLTIP_ID)
+    ?.classList.remove("cub-mini-tooltip--visible");
+  window.removeEventListener("scroll", positionMiniTooltip, true);
+  window.removeEventListener("resize", positionMiniTooltip);
+}
+
+function attachMiniTooltip(data) {
+  const miniContainer = getMiniContainer();
+  if (!miniContainer) {
+    removeMiniTooltip();
+    return;
+  }
+  ensureMiniTooltip(data);
+
+  miniContainer.addEventListener("mouseenter", showMiniTooltip);
+  miniContainer.addEventListener("mouseleave", hideMiniTooltip);
+
+  // 再描画直後もカーソルが乗ったままなら表示を復帰させる
+  requestAnimationFrame(() => {
+    if (getMiniContainer()?.matches(":hover")) showMiniTooltip();
+  });
 }
 
 const STOP_BTN_PATH_PREFIX = "M128,20A108,108";

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.1 - 2026-08-30
+
+### Fixed
+
+- Mini view tooltip was clipped by the composer: Claude's web app now wraps the model selector area in an `overflow: hidden` element. The tooltip is rendered at the document root with fixed positioning (and clamped to the viewport) so it stays fully visible
+- Mini view donuts and the status lamp were vertically misaligned with the model selector: they are now `vertical-align: middle` so they stay centered even when the surrounding element is a block box
+
 ## v1.5.0 - 2026-07-15
 
 ### Added

@@ -186,6 +186,8 @@
   display: inline-flex;
   align-items: center;
   cursor: default;
+  /* 挿入先が block の場合にベースライン揃えで浮き上がるのを防ぐ */
+  vertical-align: middle;
 }
 
 .cub-mini-container {
@@ -206,12 +208,12 @@
   flex-shrink: 0;
 }
 
+/* body 直下に描画し、入力欄側の overflow:hidden で切れないようにする */
 .cub-mini-tooltip {
   display: none;
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  top: 0;
+  left: 0;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -222,7 +224,7 @@
   padding: 10px 14px;
   border-radius: 10px;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 2147483000;
   min-width: 220px;
 }
 
@@ -290,6 +292,7 @@
   align-items: center;
   flex-shrink: 0;
   padding: 0 4px;
+  vertical-align: middle;
 }
 
 .cus-lamp {

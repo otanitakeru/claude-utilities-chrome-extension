@@ -3,6 +3,7 @@
 const STYLE_ID = "claude-wide-chat-style";
 const USAGE_ROOT_ID = "claude-usage-root";
 const MINI_USAGE_ROOT_ID = "claude-mini-usage-root";
+const MINI_TOOLTIP_ID = "cub-mini-tooltip";
 const STATUS_ROOT_ID = "claude-status-root";
 
 const WIDE_DEFAULTS = { wideEnabled: true, width: 1000, padding: 8 };
