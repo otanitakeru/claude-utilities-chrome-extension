@@ -17,7 +17,8 @@ function buildWideCss(enabled, width, padding) {
     body.chat-ui-core .max-w-3xl,
     body.chat-ui-core [class~="max-w-3xl"],
     body.chat-ui-core [data-autoscroll-container] .max-w-3xl,
-    body.chat-ui-core [data-autoscroll-container] [class~="max-w-3xl"] {
+    body.chat-ui-core [data-autoscroll-container] [class~="max-w-3xl"],
+    body.chat-ui-core [data-testid="chat-column"] {
       max-width: var(--cw-width) !important;
       box-sizing: border-box !important;
     }
