@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.2 - 2026-08-31
+
+### Fixed
+
+- Wide chat mode had no visible effect: Claude's web app now wraps the chat column in an additional `[data-testid="chat-column"]` element with its own fixed `max-w-[50.5rem]` class, which constrained the width regardless of the inner `.max-w-3xl` overrides. The wide-mode width variable is now also applied to that wrapper
+
 ## v1.5.1 - 2026-08-30
 
 ### Fixed
