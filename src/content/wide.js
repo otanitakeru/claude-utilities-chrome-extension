@@ -13,13 +13,18 @@ function buildWideCss(enabled, width, padding) {
     :root {
       --cw-width:   min(${w}px, calc(100vw - 96px));
       --cw-padding: ${p}px;
+      --transcript-width: var(--cw-width);
     }
     body.chat-ui-core .max-w-3xl,
     body.chat-ui-core [class~="max-w-3xl"],
     body.chat-ui-core [data-autoscroll-container] .max-w-3xl,
     body.chat-ui-core [data-autoscroll-container] [class~="max-w-3xl"],
-    body.chat-ui-core [data-testid="chat-column"] {
+    body.chat-ui-core [data-testid="transcript-list"] {
       max-width: var(--cw-width) !important;
+      box-sizing: border-box !important;
+    }
+    body.chat-ui-core [data-testid="chat-column"] {
+      max-width: calc(var(--cw-width) + 2.5rem) !important;
       box-sizing: border-box !important;
     }
     body.chat-ui-core [data-autoscroll-container] .max-w-3xl,

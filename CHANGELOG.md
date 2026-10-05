@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.1 - 2026-10-05
+
+### Fixed
+
+- Chat width adjustment had no effect on the chat itself: Claude's web app now sizes the transcript with `[data-testid="transcript-list"]` using `max-w-[var(--transcript-width,48rem)]`. The extension now overrides `--transcript-width` and the transcript list's max-width, and the `chat-column` wrapper is widened by its 2.5rem horizontal padding so it no longer clips the content
+
 ## v1.6.0 - 2026-10-05
 
 ### Removed
