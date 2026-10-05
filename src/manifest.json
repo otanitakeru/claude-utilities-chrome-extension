@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Claude Utilities",
-  "version": "1.5.2",
-  "description": "チャット幅調整・サイドバー幅調整・使用量表示",
+  "version": "1.6.0",
+  "description": "チャット幅調整・使用量表示",
   "permissions": ["storage", "alarms", "activeTab"],
   "host_permissions": [
     "https://claude.ai/*",
@@ -21,7 +21,6 @@
         "shared/i18n.js",
         "content/wide.js",
         "content/usage.js",
-        "content/sidebar.js",
         "content/status.js",
         "content/main.js"
       ],

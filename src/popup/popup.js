@@ -60,7 +60,6 @@ const widthRange = document.getElementById("widthRange");
 const widthNumber = document.getElementById("widthNumber");
 const resetWidthBtn = document.getElementById("resetWidth");
 const chatWidthSection = document.getElementById("chatWidthSection");
-const sidebarEnabledInput = document.getElementById("sidebarEnabled");
 const usageSection = document.getElementById("usageSection");
 const usageEnabledInput = document.getElementById("usageEnabled");
 const viewModeControl = document.getElementById("viewModeControl");
@@ -143,20 +142,6 @@ function saveWide() {
   wideDebounceTimer = setTimeout(() => notifyActiveTab(settings), 250);
 }
 
-let sidebarDebounceTimer = null;
-function saveSidebar() {
-  const settings = { sidebarEnabled: sidebarEnabledInput.checked };
-  chrome.storage.local.set(settings);
-  if (sidebarDebounceTimer) clearTimeout(sidebarDebounceTimer);
-  sidebarDebounceTimer = setTimeout(async () => {
-    const tab = await getActiveTab();
-    if (!tab?.id || !isClaudeHost(tab.url ?? "")) return;
-    chrome.tabs
-      .sendMessage(tab.id, { type: "CLAUDE_SIDEBAR_APPLY", ...settings })
-      .catch(() => {});
-  }, 250);
-}
-
 let usageDebounceTimer = null;
 function saveUsage() {
   if (usageDebounceTimer) clearTimeout(usageDebounceTimer);
@@ -196,7 +181,6 @@ function saveLang(lang) {
 chrome.storage.local.get(
   {
     ...WIDE_DEFAULTS,
-    ...SIDEBAR_DEFAULTS,
     ...USAGE_DEFAULTS,
     ...VIEW_DEFAULTS,
     ...LANG_DEFAULTS,
@@ -204,7 +188,6 @@ chrome.storage.local.get(
   (s) => {
     wideEnabledInput.checked = s.wideEnabled;
     setWidth(s.width);
-    sidebarEnabledInput.checked = s.sidebarEnabled ?? false;
     const usageOn = readUsageEnabled(s);
     usageEnabledInput.checked = usageOn;
     viewModeControl.style.display = usageOn ? "flex" : "none";
@@ -238,8 +221,6 @@ resetWidthBtn.addEventListener("click", () => {
 });
 
 wideEnabledInput.addEventListener("change", saveWide);
-
-sidebarEnabledInput.addEventListener("change", saveSidebar);
 
 usageEnabledInput.addEventListener("change", saveUsage);
 viewBarBtn.addEventListener("click", () => saveViewMode("bar"));
