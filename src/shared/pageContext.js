@@ -33,8 +33,3 @@ function getPageContext(url) {
 function isAllowedPage() {
   return isAllowedClaudePage(location.href);
 }
-
-/** claude.ai / claude.com のいずれかのページか（サイドバーの有効判定） */
-function isClaudePage() {
-  return isClaudeHost(location.href);
-}

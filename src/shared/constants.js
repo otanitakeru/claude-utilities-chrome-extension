@@ -15,20 +15,6 @@ const USAGE_DEFAULTS = { usageEnabled: true };
 const VIEW_DEFAULTS = { viewMode: "graph" };
 const LANG_DEFAULTS = { lang: "en" };
 
-const SIDEBAR_DEFAULTS = { sidebarEnabled: false, sidebarWidth: 12 };
-const SIDEBAR_MIN_WIDTH = 8.75;
-const SIDEBAR_MAX_WIDTH = 30;
-const SIDEBAR_WIDTH_STEP = 0.25;
-const SIDEBAR_COLLAPSED_REM = 3.1;
-
-function snapSidebarWidth(value) {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return SIDEBAR_DEFAULTS.sidebarWidth;
-  const clamped = Math.min(Math.max(n, SIDEBAR_MIN_WIDTH), SIDEBAR_MAX_WIDTH);
-  const steps = Math.round((clamped - SIDEBAR_MIN_WIDTH) / SIDEBAR_WIDTH_STEP);
-  return SIDEBAR_MIN_WIDTH + steps * SIDEBAR_WIDTH_STEP;
-}
-
 function snapWidth(value) {
   const n = Number(value);
   if (!Number.isFinite(n)) return WIDE_DEFAULTS.width;

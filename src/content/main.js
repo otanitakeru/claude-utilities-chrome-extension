@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════
 //  Claude Utilities — content script エントリーポイント
-//  読み込み順: pageContext.js → constants.js → i18n.js → wide.js → usage.js → sidebar.js → main.js
+//  読み込み順: pageContext.js → constants.js → i18n.js → wide.js → usage.js → main.js
 // ════════════════════════════════════════════════════════
 
 // ── Extension context 管理 ───────────────────────────────
@@ -19,7 +19,6 @@ function invalidateContext() {
   );
   try {
     domObserver?.disconnect();
-    teardownSidebarObserver();
   } catch (_) {}
 }
 
@@ -46,16 +45,13 @@ function safeChromeCall(fn, label = "unknown") {
 function teardownContentUI() {
   removeUsage();
   removeWideStyle();
-  removeSidebarStyle();
-  teardownSidebarObserver();
 }
 
-/** レイアウト設定（幅・サイドバー）をストレージから再適用する */
+/** レイアウト設定（幅）をストレージから再適用する */
 function reapplyLayoutSettings(label) {
   safeChromeCall(() => {
-    chrome.storage.local.get({ ...WIDE_DEFAULTS, ...SIDEBAR_DEFAULTS }, (s) => {
+    chrome.storage.local.get(WIDE_DEFAULTS, (s) => {
       applyWideSettings(s);
-      applySidebarSettings(s);
     });
   }, label);
 }
@@ -66,14 +62,12 @@ safeChromeCall(() => {
     {
       ...LANG_DEFAULTS,
       ...WIDE_DEFAULTS,
-      ...SIDEBAR_DEFAULTS,
       ...USAGE_DEFAULTS,
       viewMode: "graph",
     },
     (s) => {
       currentLang = s.lang ?? "en";
       applyWideSettings(s);
-      applySidebarSettings(s);
       usageEnabled = readUsageEnabled(s);
       viewMode = s.viewMode ?? "graph";
       if (!isAllowedPage()) {
@@ -113,8 +107,6 @@ domObserver = new MutationObserver(() => {
     setTimeout(loadAndRender, 500);
   if (isAllowedPage() && !document.getElementById(STATUS_ROOT_ID))
     setTimeout(loadAndRenderStatus, 500);
-  // Retry sidebar observer if not yet attached (e.g. nav just appeared in DOM)
-  if (sidebarEnabled && !sidebarObserver) initSidebarDisplay();
 });
 domObserver.observe(document.body, { childList: true, subtree: true });
 
@@ -177,9 +169,6 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg?.type === "CLAUDE_LANG_CHANGE") {
     currentLang = msg.lang ?? "en";
     loadAndRender();
-  }
-  if (msg?.type === "CLAUDE_SIDEBAR_APPLY") {
-    applySidebarSettings(msg);
   }
   if (msg?.type === "CLAUDE_STATUS_UPDATE") {
     mountStatusLamp(msg.claudeStatus ?? "unknown");

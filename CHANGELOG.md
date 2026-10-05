@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0 - 2026-10-05
+
+### Removed
+
+- Sidebar width adjustment: Claude now ships a built-in sidebar resize feature, so the extension's own handle and popup toggle are no longer needed
+
 ## v1.5.2 - 2026-08-31
 
 ### Fixed
