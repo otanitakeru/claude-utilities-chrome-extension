@@ -1,5 +1,11 @@
 # 変更履歴
 
+## v1.6.1 - 2026-10-05
+
+### 修正
+
+- チャット幅調整がチャット本体に反映されない問題を修正: Claude の Web アプリが `[data-testid="transcript-list"]` に `max-w-[var(--transcript-width,48rem)]` を指定して幅を決める構造に変わったため、`--transcript-width` と transcript-list の max-width を上書きするようにした。あわせて `chat-column` ラッパーは左右パディング 2.5rem 分を加算して内容が切れないようにした
+
 ## v1.6.0 - 2026-10-05
 
 ### 削除
